@@ -23,6 +23,14 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
     ];
 });
 
+function randString($length) {
+    $char = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    $char = str_shuffle($char);
+    for($i = 0, $rand = '', $l = strlen($char) - 1; $i < $length; $i ++) {
+        $rand .= $char{mt_rand(0, $l)};
+    }
+    return $rand;
+}
 
 /**
  * Car Factory
@@ -43,7 +51,7 @@ $factory->define(App\Car::class, function (Faker\Generator $faker) {
             'Mercedes B-Klasse',
             'Renault Clio'
         ]),
-        'chassis_number' => $faker->uuid,
+        'chassis_number' => strtoupper(randString(6)),
         'purchase_date' => $faker->dateTimeBetween('-1 year', '-1 month'),
         'purchase_price' => $faker->numberBetween(1000, 20000)
     ];
@@ -74,6 +82,6 @@ $factory->define(App\Invoice::class, function (Faker\Generator $faker) {
         ]),
         'price' => $faker->numberBetween(1, 2000),
         'date' => $faker->dateTimeBetween('-1 year', '-1 month'),
-        'description' => $faker->numberBetween(1000, 20000)
+        'description' => $faker->text()
     ];
 });

@@ -59,7 +59,7 @@ Route::get('/car/{id}/delete', function($id) {
 
     return redirect()->route('car_index');
 })->name('car_delete');
-Route::get('/car/stock', 'CarController@indexStock')->name('car_index_stock');
+Route::get('/carStock', 'CarController@indexStock')->name('car_index_stock');
 Route::get('/car/{id}', 'CarController@detail')->name('car_detail');
 Route::get('/car', 'CarController@index')->name('car_index');
 
