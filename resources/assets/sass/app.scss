@@ -20,3 +20,11 @@ table.table.vertical td {
   overflow-x: hidden;
   overflow-y: hidden;
 }
+
+.table-data tr td:first-child {
+  text-align:right
+}
+
+.table-data tr td:last-child {
+  text-align: center
+}

@@ -11,7 +11,7 @@
                         </div>
 
                         <div class="table-responsive">
-                            <table class="table table-striped">
+                            <table class="table table-striped table-data">
                                 <tbody>
                                 <tr>
                                     <td>Bezeichnung</td>
@@ -55,7 +55,7 @@
                         </div>
 
                         <div class="table-responsive">
-                            <table class="table table-striped">
+                            <table class="table table-striped table-data">
                                 <caption>Ausgaben</caption>
                                 <tbody>
                                 <tr>
@@ -75,7 +75,7 @@
                                 </tbody>
                             </table>
                             <hr/>
-                            <table class="table table-striped">
+                            <table class="table table-striped table-data">
                                 <caption>Einnahmen</caption>
                                 <tbody>
                                 <tr>
@@ -106,7 +106,7 @@
                         </div>
 
                         <div class="table-responsive">
-                            <table class="table table-striped" id="information_table">
+                            <table class="table table-striped table-data" id="information_table">
                                 <tbody>
                                 <tr>
                                     <td>Erstellt von</td>
@@ -136,7 +136,7 @@
                                     </ul>
                                 </div>
                                 <hr/>
-                            <a href="{{route('car_delete', ['id' => $car->id])}}" class="btn btn-block btn-danger"><i class="fa fa-ban"></i> Auto löschen</a>
+                            <a href="{{route('car_delete', ['id' => $car->id])}}" class="btn btn-block btn-danger"><i class="fa fa-trash"></i> Auto löschen</a>
                             @if ($car->sale_date)
                                 <a href="{{route('car_unsell', ['id' => $car->id])}}" class="btn btn-block btn-danger"><i class="fa fa-ban"></i> Verkauf entfernen</a>
                             @endif
