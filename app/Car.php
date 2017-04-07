@@ -118,11 +118,11 @@ class Car extends Model
     }
 
     public function getCostsWithExpenses() {
-        return Formatter::currency($this->sale_price - $this->purchase_price);
+        return Formatter::currency($this->sale_price - ($this->purchase_price + $this->totalExpense()));
     }
 
     public function getCostsWithoutExpenses() {
-        return Formatter::currency($this->sale_price - ($this->purchase_price + $this->totalExpense()));
+        return Formatter::currency($this->sale_price - $this->purchase_price);
     }
 
     public function getConflicts() {

@@ -92,10 +92,8 @@
                             </table>
                         </div>
                         <div class="panel-body">
-                            <span>mit
-                                Aufwendungen: {{$car->getCostsWithExpenses()}}</span>
-                            <span class="pull-right">ohne
-                                Aufwendungen: {{$car->getCostsWithoutExpenses()}}</span>
+                            <span>mit Aufwendungen: {{$car->getCostsWithExpenses()}}</span>
+                            <span class="pull-right">ohne Aufwendungen: {{$car->getCostsWithoutExpenses()}}</span>
                         </div>
                     </div>
                 </div>
