@@ -20,15 +20,21 @@ class CreateInvoicesTable extends Migration
             $table->increments('id');
             $table->string('title')->nullable();
             $table->decimal('price');
-            $table->text('description');
+            $table->text('description')->nullable();
 
+            $table->integer('user_id')->unsigned()->nullable();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->integer('car_id')->unsigned()->nullable();
-            $table->foreign('car_id')->references('id')->on('cars')->onDelete('set null');
+            $table->foreign('car_id')->references('id')->on('cars')->onDelete('cascade');
             $table->integer('invoice_type_id')->unsigned()->nullable();
             $table->foreign('invoice_type_id')->references('id')->on('invoice_types')->onDelete('set null');
 
             $table->date('date');
             $table->timestamps();
+
+            $table->index('title');
+            $table->index('price');
+            $table->index('date');
         });
     }
 

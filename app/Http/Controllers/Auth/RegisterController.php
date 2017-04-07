@@ -36,6 +36,7 @@ class RegisterController extends Controller
      */
     public function __construct()
     {
+        die("Registration disabled");
         $this->middleware('guest');
     }
 

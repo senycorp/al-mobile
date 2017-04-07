@@ -7,3 +7,16 @@
 
 // Bootstrap
 @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
+
+// FontAwesome
+@import "../css/font-awesome-4.7.0/css/font-awesome.min.css";
+
+// Table related styles
+table.table.vertical td {
+  vertical-align: middle;
+}
+
+.dataTables_wrapper {
+  overflow-x: hidden;
+  overflow-y: hidden;
+}

@@ -8,11 +8,13 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>Al-Mobile</title>
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-
+    <link rel="stylesheet" type="text/css" href="{{asset('datatables/datatables.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{asset('air-datepicker/css/datepicker.min.css')}}">
+    <link rel="stylesheet" type="text/css"; media="print" href="{{asset('css/print.css')}}">
     <!-- Scripts -->
     <script>
         window.Laravel = {!! json_encode([
@@ -36,7 +38,7 @@
 
                     <!-- Branding Image -->
                     <a class="navbar-brand" href="{{ url('/') }}">
-                        {{ config('app.name', 'Laravel') }}
+                        Al-Mobile <span class="label label-danger">Development Preview</span>
                     </a>
                 </div>
 
@@ -50,12 +52,17 @@
                     <ul class="nav navbar-nav navbar-right">
                         <!-- Authentication Links -->
                         @if (Auth::guest())
-                            <li><a href="{{ route('login') }}">Login</a></li>
-                            <li><a href="{{ route('register') }}">Register</a></li>
+                            <li><a href="{{ route('login') }}">Login <i class="fa fa-sign-in"></i></a></li>
+                            <!--<li><a href="{{ route('register') }}">Register</a></li>-->
                         @else
+                            <li><a href="{{ route('dashboard') }}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+                            <li><a href="{{ route('car_index') }}"><i class="fa fa-car"></i> Autos</a></li>
+                            <li><a href="{{ route('expense_index') }}"><i class="fa fa-euro"></i> Aufwände</a></li>
+                            <li><a href="{{ route('report') }}"><i class="fa fa-area-chart"></i> Reports</a></li>
+                            <li><a href="javascript:void(0)">|</a></li>
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                                    {{ Auth::user()->name }} <span class="caret"></span>
+                                    <i class="fa fa-user-circle"></i> {{ Auth::user()->name }} <span class="caret"></span>
                                 </a>
 
                                 <ul class="dropdown-menu" role="menu">
@@ -83,5 +90,9 @@
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}"></script>
+    <script src="{{asset('datatables/datatables.js')}}"></script>
+    <script src="{{asset('air-datepicker/js/datepicker.js')}}"></script>
+    <script src="{{asset('air-datepicker/js/i18n/datepicker.de.js')}}"></script>
+    @stack('scripts')
 </body>
 </html>

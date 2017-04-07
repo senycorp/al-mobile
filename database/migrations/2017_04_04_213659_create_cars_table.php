@@ -24,9 +24,16 @@ class CreateCarsTable extends Migration
             $table->decimal('purchase_price');
             $table->date('sale_date')->nullable();
             $table->decimal('sale_price')->nullable();
+            $table->integer('user_id')->unsigned()->nullable();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
 
-            $table->index(['title', 'chassis_number', 'sale_date']);
+            $table->index('title');
+            $table->index('chassis_number');
+            $table->index('purchase_date');
+            $table->index('purchase_price');
+            $table->index('sale_date');
+            $table->index('sale_price');
         });
     }
 
