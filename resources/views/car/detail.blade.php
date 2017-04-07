@@ -96,11 +96,11 @@
                 <div class="col-md-6">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            Informationen
+                            Informationen <span class="pull-right" id="loader"><i class="fa fa-spinner fa-spin"></i> Lade Inserat...</span>
                         </div>
 
                         <div class="table-responsive">
-                            <table class="table table-striped">
+                            <table class="table table-striped" id="information_table">
                                 <tbody>
                                 <tr>
                                     <td>Erstellt von</td>
@@ -389,6 +389,15 @@
             minDate: new Date('{{$car->purchase_date}}'),
             maxDate: new Date(),
         });
+
+        axios.get('{{route('car_auction_data', ['id' => $car->id])}}').then(function(response) {
+            $('#loader').hide();
+            $('#information_table tbody').prepend(
+                '<tr><td colspan="2"><img src="'+response.data.image+'" style="width:100%"/></td></tr>' +
+                '<tr><td>Bezeichnung</td><td>'+response.data.title+'</td></tr>' +
+                '<tr><td>Preis</td><td>'+response.data.brutto_price+'</td></tr>'
+            )
+        })
     });
 </script>
 @endpush

@@ -34,6 +34,7 @@ Route::get('/expense', 'ExpenseController@index')->name('expense_index');
 Route::post('/expense', 'ExpenseController@create')->name('expense_create');
 Route::get('/car/data', 'CarController@getData')->name('car_data');
 Route::get('/car/datastock', 'CarController@getDataStock')->name('car_data_stock');
+Route::get('/car/{id}/auctionData', 'CarController@getAuctionData')->name('car_auction_data');
 Route::get('/car/{id}/invoiceData', 'CarController@getInvoiceData')->name('car_invoice_data');
 Route::get('/car/{id}/delete', function($id) {
     \App\Car::destroy([$id]);

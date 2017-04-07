@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Car;
+use Goutte\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -86,6 +87,19 @@ class CarController extends Controller
      */
     public function detail($id) {
         return view('car.detail', ['car' => Car::find($id)]);
+    }
+
+    public function getAuctionData($id) {
+        $client = new Client();
+        $crawler = $client->request('GET', 'http://suchen.mobile.de/fahrzeuge/details.html?id=239600425');
+
+        $data = [];
+        $data['title'] =  $crawler->filter('h1#rbt-ad-title')->first()->text();
+        $data['brutto_price'] =  $crawler->filter('span.h3.rbt-prime-price')->first()->text();
+        $data['netto_price'] =  $crawler->filter('span.rbt-sec-price')->first()->text();
+        $data['image'] = 'http://1.1.1.1/bmi/' . substr($crawler->filter('div#rbt-gallery-img-0 > img')->first()->attr('src'), 2);
+
+        return response()->json($data);
     }
 
     public function getData(Request $request) {
