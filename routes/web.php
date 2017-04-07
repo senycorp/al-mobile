@@ -11,6 +11,8 @@
 |
 */
 
+use Goutte\Client;
+
 Route::get('/', 'HomeController@index')->name('dashboard');
 
 Auth::routes();
@@ -34,6 +36,22 @@ Route::get('/expense', 'ExpenseController@index')->name('expense_index');
 Route::post('/expense', 'ExpenseController@create')->name('expense_create');
 Route::get('/car/data', 'CarController@getData')->name('car_data');
 Route::get('/car/datastock', 'CarController@getDataStock')->name('car_data_stock');
+Route::get('/mobile/{id}', function($id) {
+    try {
+        $client = new Client();
+        $crawler = $client->request('GET', 'http://suchen.mobile.de/fahrzeuge/details.html?id=' . $id);
+
+        $data = [];
+        $data['title'] =  $crawler->filter('h1#rbt-ad-title')->first()->text();
+        $data['brutto_price'] =  $crawler->filter('span.h3.rbt-prime-price')->first()->text();
+        $data['netto_price'] =  ($crawler->filter('span.rbt-sec-price')->count()) ? $crawler->filter('span.rbt-sec-price')->first()->text() : null;
+        $data['image'] = 'http://1.1.1.1/bmi/' . substr($crawler->filter('div#rbt-gallery-img-0 > img')->first()->attr('src'), 2);
+
+        return response()->json($data);
+    } catch (Exception $e) {
+        return response()->setStatusCode(500)->json(['error' => 'No Data available']);
+    }
+})->name('mobile_data');
 Route::get('/car/{id}/auctionData', 'CarController@getAuctionData')->name('car_auction_data');
 Route::get('/car/{id}/invoiceData', 'CarController@getInvoiceData')->name('car_invoice_data');
 Route::get('/car/{id}/delete', function($id) {

@@ -20,6 +20,7 @@ class CreateCarsTable extends Migration
             $table->increments('id');
             $table->string('title');
             $table->string('chassis_number')->unique();
+            $table->string('mobile_id')->unique()->nullable();
             $table->date('purchase_date');
             $table->decimal('purchase_price');
             $table->date('sale_date')->nullable();

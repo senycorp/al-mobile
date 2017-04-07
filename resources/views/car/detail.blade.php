@@ -17,6 +17,12 @@
                                     <td>Bezeichnung</td>
                                     <td>{{$car->title}}</td>
                                 </tr>
+                                @if ($car->mobile_id)
+                                    <tr>
+                                        <td>Mobile-ID</td>
+                                        <td>{{$car->mobile_id}}</td>
+                                    </tr>
+                                @endif
                                 <tr>
                                     <td>Fahrgestellnummer</td>
                                     <td>{{$car->chassis_number}}</td>
@@ -96,7 +102,7 @@
                 <div class="col-md-6">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            Informationen <span class="pull-right" id="loader"><i class="fa fa-spinner fa-spin"></i> Lade Inserat...</span>
+                            Informationen @if ($car->mobile_id)<span class="pull-right" id="loader"><i class="fa fa-spinner fa-spin"></i> Lade Inserat...@endif</span>
                         </div>
 
                         <div class="table-responsive">
@@ -135,6 +141,9 @@
                             <a href="{{route('car_delete', ['id' => $car->id])}}" class="btn btn-block btn-danger"><i class="fa fa-ban"></i> Auto löschen</a>
                             @if ($car->sale_date)
                                 <a href="{{route('car_unsell', ['id' => $car->id])}}" class="btn btn-block btn-danger"><i class="fa fa-ban"></i> Verkauf entfernen</a>
+                            @endif
+                            @if ($car->mobile_id)
+                                <a href="http://suchen.mobile.de/fahrzeuge/details.html?id={{$car->mobile_id}}" class="btn btn-block btn-primary"><i class="fa fa-legal"></i> Mobile.de</a>
                             @endif
                         </div>
                     </div>
@@ -390,14 +399,16 @@
             maxDate: new Date(),
         });
 
+        @if ($car->mobile_id)
         axios.get('{{route('car_auction_data', ['id' => $car->id])}}').then(function(response) {
             $('#loader').hide();
             $('#information_table tbody').prepend(
-                '<tr><td colspan="2"><img src="'+response.data.image+'" style="width:100%"/></td></tr>' +
+                '<tr><td colspan="2" style="padding:0;"><img src="'+response.data.image+'" style="width:100%"/></td></tr>' +
                 '<tr><td>Bezeichnung</td><td>'+response.data.title+'</td></tr>' +
                 '<tr><td>Preis</td><td>'+response.data.brutto_price+'</td></tr>'
             )
         })
+        @endif
     });
 </script>
 @endpush

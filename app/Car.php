@@ -27,6 +27,7 @@ class Car extends Model
         'sale_date',
         'sale_price',
         'user_id',
+        'mobile_id'
     ];
 
     /**

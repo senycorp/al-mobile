@@ -25,6 +25,26 @@
                             </div>
                         </div>
 
+                        <div class="form-group{{ $errors->has('mobile_id') ? ' has-error' : '' }}">
+                            <label for="mobile_id" class="col-md-4 control-label">Mobile-ID</label>
+
+                            <div class="col-md-6">
+                                <div class="input-group">
+                                    <input id="mobile_id" type="text" class="form-control" name="mobile_id" value="{{ old('mobile_id') }}" autofocus>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-primary" type="button" id="loadMobile">
+                                            <span id="loader" style="display:none;"><i class="fa fa-spin fa-spinner"></i></span>&nbsp;
+                                            Lade Daten</button>
+                                    </span>
+                                </div>
+                                @if ($errors->has('mobile_id'))
+                                    <span class="help-block">
+                                        <strong>{{ $errors->first('mobile_id') }}</strong>
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+
                         <div class="form-group{{ $errors->has('chassis_number') ? ' has-error' : '' }}">
                             <label for="chassis_number" class="col-md-4 control-label">Fahrgestellnummer</label>
 
@@ -185,6 +205,19 @@
             language: 'de',
             maxDate: new Date(),
         });
+
+        $('#loadMobile').click(function(){
+            $('#loader').show();
+            if ($('#mobile_id')) {
+                axios.get('/mobile/' + $('#mobile_id').val()).then(function (response) {
+                    $('#title').val(response.data.title);
+                    $('#loader').hide();
+                }).catch(function() {
+                    $('#loader').hide();
+                    alert("Die ID liefert keine Ergebnisse.");
+                })
+            }
+        })
     });
 </script>
 @endpush
