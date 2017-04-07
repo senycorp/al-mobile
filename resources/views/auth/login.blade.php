@@ -16,6 +16,11 @@
     <link rel="stylesheet" type="text/css" href="{{asset('air-datepicker/css/datepicker.min.css')}}">
     <link rel="stylesheet" type="text/css"; media="print" href="{{asset('css/print.css')}}">
     <!-- Scripts -->
+    <script>
+        window.Laravel = {!! json_encode([
+            'csrfToken' => csrf_token(),
+        ]) !!};
+    </script>
 </head>
 <body>
     <div id="app"></div>
