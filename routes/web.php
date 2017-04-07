@@ -33,12 +33,14 @@ Route::get('/expense/{id}', 'ExpenseController@detail')->name('expense_detail');
 Route::get('/expense', 'ExpenseController@index')->name('expense_index');
 Route::post('/expense', 'ExpenseController@create')->name('expense_create');
 Route::get('/car/data', 'CarController@getData')->name('car_data');
+Route::get('/car/datastock', 'CarController@getDataStock')->name('car_data_stock');
 Route::get('/car/{id}/invoiceData', 'CarController@getInvoiceData')->name('car_invoice_data');
 Route::get('/car/{id}/delete', function($id) {
     \App\Car::destroy([$id]);
 
     return redirect()->route('car_index');
 })->name('car_delete');
+Route::get('/car/stock', 'CarController@indexStock')->name('car_index_stock');
 Route::get('/car/{id}', 'CarController@detail')->name('car_detail');
 Route::get('/car', 'CarController@index')->name('car_index');
 

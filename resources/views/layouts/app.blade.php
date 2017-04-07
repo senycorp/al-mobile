@@ -57,6 +57,7 @@
                         @else
                             <li><a href="{{ route('dashboard') }}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
                             <li><a href="{{ route('car_index') }}"><i class="fa fa-car"></i> Autos</a></li>
+                            <li><a href="{{ route('car_index_stock') }}"><i class="fa fa-bank"></i> Bestand</a></li>
                             <li><a href="{{ route('expense_index') }}"><i class="fa fa-euro"></i> Aufwände</a></li>
                             <li><a href="{{ route('report') }}"><i class="fa fa-area-chart"></i> Reports</a></li>
                             <li><a href="javascript:void(0)">|</a></li>

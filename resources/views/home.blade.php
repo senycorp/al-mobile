@@ -4,6 +4,13 @@
 <div class="container">
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
+            <div class="alert alert-danger">
+                <h4><i class="fa fa-warning"></i> Wichtige Informationen</h4>
+                Diese Applikation befindet sich in aktiver Entwicklung und dient lediglich zu Demonstrationszwecken. Von einem produktivem Einsatz sollte daher dringlichst
+                abgesehen werden.
+                <hr/>
+                <a href="https://github.com/senycorp/al-mobile"><i class="fa fa-github"></i> GitHub</a>
+            </div>
             <div class="panel panel-default">
                 <div class="panel-heading">Hallo {{Auth::user()->name}}</div>
 

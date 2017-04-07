@@ -32,6 +32,16 @@ class CarController extends Controller
     }
 
     /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function indexStock()
+    {
+        return view('car.carstock');
+    }
+
+    /**
      * Create new car
      *
      * @param Request $request
@@ -80,6 +90,12 @@ class CarController extends Controller
 
     public function getData(Request $request) {
         $cars = DB::table('cars')->select(['id', 'title', 'chassis_number', 'purchase_date', 'purchase_price', 'sale_date', 'sale_price']);
+
+        return Datatables::of($cars)->make(true);
+    }
+
+    public function getDataStock(Request $request) {
+        $cars = DB::table('cars')->select(['id', 'title', 'chassis_number', 'purchase_date', 'purchase_price'])->whereNull('sale_date');
 
         return Datatables::of($cars)->make(true);
     }

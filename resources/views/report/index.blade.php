@@ -23,6 +23,19 @@
                 </div>
             </div>
             @if (isset($data))
+            <div class="panel panel-default" id="print_panel">
+                <div class="panel-heading">
+                    Drucken
+                </div>
+                <div class="panel-body">
+                    <div class="alert alert-info">
+                        <h4><i class="fa fa-info-circle"></i> Informationen</h4>
+                        Aufgrund verschiedener Umstände ist es derzeit nicht möglich den von den Browsern mitgelieferten PDF-Printer vorauszuwählen. Diese Druckfunktionalität zielt
+                        jedoch genau darauf ab. Bitte treffen Sie die Auswahl deshalb manuell und speichern Sie die erstellte PDF am gewünschten Zielort.
+                    </div>
+                    <button class="btn btn-block btn-primary" onclick="window.print()"><i class="fa fa-print"></i> Drucken</button>
+                </div>
+            </div>
             <div class="panel panel-default" id="export_panel">
                 <div class="panel-heading">
                     Export
