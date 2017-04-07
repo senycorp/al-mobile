@@ -27,17 +27,17 @@ class DevelopmentSeeder extends Seeder
         ]);
 
         // Generate unselled cars
-        $unselledCars = factory(Car::class, 200)->create([
+        $unselledCars = factory(Car::class, 7500)->create([
             'user_id' => $user->id
         ])->each(function (Car $car) use ($user) {
             // Generate invoices for car
-            factory(\App\Invoice::class, 10)->create([
+            factory(\App\Invoice::class, 20)->create([
                 'car_id' => $car->id,
                 'user_id' => $user->id
             ]);
         });
 
-        $selledCars = factory(Car::class, 200   )->create([
+        $selledCars = factory(Car::class, 7500   )->create([
             'user_id' => $user->id
         ])->each(function (Car $car) use ($user, $faker) {
             $car->fill([
@@ -46,10 +46,12 @@ class DevelopmentSeeder extends Seeder
             ])->save();
 
             // Generate invoices for car
-            factory(\App\Invoice::class, 10)->create([
+            factory(\App\Invoice::class, 20)->create([
                 'car_id' => $car->id,
                 'user_id' => $user->id
             ]);
         });
+
+        $invoices = factory(\App\Invoice::class, 7500)->create([]);
     }
 }
