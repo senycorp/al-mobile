@@ -128,10 +128,10 @@
                                             '<td>'.$sCar->id.'</td>' .
                                             '<td>'.$sCar->title.'</td>' .
                                             '<td>'.$sCar->chassis_number.'</td>' .
-                                            '<td>'.$sCar->purchase_date.'</td>' .
-                                            '<td>'.$sCar->purchase_price.'</td>' .
-                                            '<td>'.$sCar->sale_date.'</td>' .
-                                            '<td>'.$sCar->sale_price.'</td>' .
+                                            '<td>'.$sCar->getPurchaseDate().'</td>' .
+                                            '<td>'.$sCar->getPurchasePrice().'</td>' .
+                                            '<td>'.$sCar->getSaleDate().'</td>' .
+                                            '<td>'.$sCar->getSalePrice().'</td>' .
                                         '</tr>' .
                                         '<tr>'.
                                             '<td></td>'.
@@ -149,12 +149,12 @@
                                                     <tbody>';
                                 if (count($sCar->invoices)) {
                                     foreach ($sCar->invoices()->orderBy('date')->get() AS $invoice) {
-                                    echo '<tr>
+                                    echo '<tr '.(($invoice->hasConflict()) ? 'class="danger"' : '').'>
                                             <td>'.sprintf('%04d', $counter++).'</td>
                                                             <td>'.$invoice->id.'</td>
                                                             <td>'.$invoice->title.'</td>
-                                                            <td>'.$invoice->price.'</td>
-                                                            <td>'.$invoice->date.'</td>
+                                                            <td>'.$invoice->getPrice().'</td>
+                                                            <td>'.$invoice->getDate().'</td>
                                             </tr>';
                                     }
                                 } else {

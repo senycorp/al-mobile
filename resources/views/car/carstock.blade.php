@@ -29,6 +29,13 @@
                             <label for="mobile_id" class="col-md-4 control-label">Mobile-ID</label>
 
                             <div class="col-md-6">
+                                <div class="alert alert-info">
+                                    <h4><i class="fa fa-info-circle"></i> Information</h4>
+                                    Die Mobile-ID kann dazu genutzt werden vorab existierende Inserate abzugreifen und zu verwenden. Dazu muss lediglich die ID des
+                                    Inserats angegeben werden:
+                                    <br/>
+                                    <code>http://suchen.mobile.de/fahrzeuge/details.html?id={INSERAT_ID}</code>
+                                </div>
                                 <div class="input-group">
                                     <input id="mobile_id" type="text" class="form-control" name="mobile_id" value="{{ old('mobile_id') }}" autofocus>
                                     <span class="input-group-btn">
