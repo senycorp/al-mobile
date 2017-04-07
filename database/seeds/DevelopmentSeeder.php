@@ -52,6 +52,8 @@ class DevelopmentSeeder extends Seeder
             ]);
         });
 
-        $invoices = factory(\App\Invoice::class, 7500)->create([]);
+        $invoices = factory(\App\Invoice::class, 7500)->create([
+            'user_id' => $user->id
+        ]);
     }
 }
