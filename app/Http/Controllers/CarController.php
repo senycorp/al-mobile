@@ -121,7 +121,8 @@ class CarController extends Controller
         $data['title'] =  $crawler->filter('h1#rbt-ad-title')->first()->text();
         $data['brutto_price'] =  $crawler->filter('span.h3.rbt-prime-price')->first()->text();
         $data['netto_price'] =  ($crawler->filter('span.rbt-sec-price')->count()) ? $crawler->filter('span.rbt-sec-price')->first()->text() : null;
-        $data['image'] = 'http://1.1.1.1/bmi/' . substr($crawler->filter('div#rbt-gallery-img-0 > img')->first()->attr('src'), 2);
+        //$data['image'] = 'http://1.1.1.1/bmi/' . substr($crawler->filter('div#rbt-gallery-img-0 > img')->first()->attr('src'), 2);
+        $data['image'] = 'http:' . $crawler->filter('div#rbt-gallery-img-0 > img')->first()->attr('src');
 
         return response()->json($data);
     }
