@@ -168,8 +168,8 @@
     $(function() {
         $('#date').datepicker({
             language: 'de',
-            @if ($expense->car && $expense->car->purchase_date) minDate:  new Date('{{$expense->car->purchase_date}}') @endif,
-            @if ($expense->car && $expense->car->sale_date) maxDate: new Date('{{$expense->car->sale_date}}') @else maxDate: new Date() @endif,
+            @if ($expense->car && $expense->car->purchase_date) minDate:  new Date('{{$expense->car->purchase_date}}'), @endif
+            @if ($expense->car && $expense->car->sale_date) maxDate: new Date('{{$expense->car->sale_date}}') @else maxDate: new Date() @endif
         });
     });
 </script>
