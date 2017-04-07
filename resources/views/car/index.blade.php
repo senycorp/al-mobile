@@ -214,7 +214,7 @@
 
         $('#loadMobile').click(function(){
             $('#loader').show();
-            if ($('#mobile_id')) {
+            if ($('#mobile_id').val()) {
                 axios.get('/mobile/' + $('#mobile_id').val()).then(function (response) {
                     $('#title').val(response.data.title);
                     $('#loader').hide();
@@ -222,6 +222,9 @@
                     $('#loader').hide();
                     alert("Die ID liefert keine Ergebnisse.");
                 })
+            } else {
+                $('#loader').hide();
+                alert('Es wurde keine ID angegeben.');
             }
         })
     });

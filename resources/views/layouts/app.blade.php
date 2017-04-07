@@ -94,6 +94,7 @@
     <script src="{{asset('datatables/datatables.js')}}"></script>
     <script src="{{asset('air-datepicker/js/datepicker.js')}}"></script>
     <script src="{{asset('air-datepicker/js/i18n/datepicker.de.js')}}"></script>
+    <script src="{{asset('Chart.bundle.min.js')}}"></script>
     @stack('scripts')
 </body>
 </html>

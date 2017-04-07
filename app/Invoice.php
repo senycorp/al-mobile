@@ -58,6 +58,8 @@ class Invoice extends Model
 
     public function hasConflict() {
         if ($this->car_id) {
+            if ((new Date($this->car->purchase_date))->greaterThan(new Date($this->date))) return true;
+
             if ($this->car->sale_date) {
                 return !(new Date($this->car->sale_date))->greaterThanOrEqualTo(new Date($this->date));
             }

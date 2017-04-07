@@ -125,11 +125,10 @@
                         </div>
 
                         <div class="panel-body">
-                            @if ($car->getConflicts())
                                 <div class="alert alert-danger" role="alert">
-                                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
                                     <span class="sr-only">Error:</span>
-                                    Probleme bei <b>{{count($car->getConflicts())}}</b> Rechnungen:
+                                    <h4><i class="fa fa-warning"></i> Probleme bei <b>{{count($car->getConflicts())}}</b> Rechnungen</h4>
+
                                     <ul>
                                         @foreach ($car->getConflicts() as $conflict)
                                             <li><a href="{{route('expense_detail', ['id' => $conflict->id])}}">{{ $conflict->title }} {{$conflict->date}}</a></li>
@@ -137,7 +136,6 @@
                                     </ul>
                                 </div>
                                 <hr/>
-                            @endif
                             <a href="{{route('car_delete', ['id' => $car->id])}}" class="btn btn-block btn-danger"><i class="fa fa-ban"></i> Auto löschen</a>
                             @if ($car->sale_date)
                                 <a href="{{route('car_unsell', ['id' => $car->id])}}" class="btn btn-block btn-danger"><i class="fa fa-ban"></i> Verkauf entfernen</a>
@@ -390,6 +388,7 @@
 
         $('#invoice_date').datepicker({
             language: 'de',
+            minDate: new Date('{{$car->purchase_date}}'),
             maxDate: @if ($car->sale_date) new Date('{{$car->sale_date}}') @else new Date() @endif,
         });
 

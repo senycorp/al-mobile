@@ -73,18 +73,22 @@
                         </thead>
                         <tbody>
                             @php
-                            $counter = 0;
-                            $total = 0;
-                            foreach($data['purchased'] as $pCar) {
-                                $total += $pCar->purchase_price;
-                                echo    '<tr>' .
-                                            '<td>'.sprintf('%04d', $counter++).'</td>' .
-                                            '<td>'.$pCar->id.'</td>' .
-                                            '<td>'.$pCar->title.'</td>' .
-                                            '<td>'.$pCar->chassis_number.'</td>' .
-                                            '<td>'.$pCar->purchase_date.'</td>' .
-                                            '<td>'.$pCar->purchase_price.'</td>' .
-                                        '</tr>';
+                            if (count($data['purchased'])) {
+                                $counter = 0;
+                                $total = 0;
+                                foreach($data['purchased'] as $pCar) {
+                                    $total += $pCar->purchase_price;
+                                    echo    '<tr>' .
+                                                '<td>'.sprintf('%04d', $counter++).'</td>' .
+                                                '<td>'.$pCar->id.'</td>' .
+                                                '<td>'.$pCar->title.'</td>' .
+                                                '<td>'.$pCar->chassis_number.'</td>' .
+                                                '<td>'.$pCar->getPurchaseDate().'</td>' .
+                                                '<td>'.$pCar->getPurchasePrice().'</td>' .
+                                            '</tr>';
+                                }
+                            } else {
+                                echo '<tr class="info"><td colspan="6">Keine Daten verfügbar</td></tr>';
                             }
                             @endphp
                         </tbody>
@@ -115,6 +119,8 @@
                         <tbody>
                         @php
                             $total = 0;
+                            if (count($data['selled'])) {
+
                             foreach($data['selled'] as $sCar) {
                                 $total += $sCar->sale_price;
                                 echo    '<tr>' .
@@ -152,7 +158,7 @@
                                             </tr>';
                                     }
                                 } else {
-                                    echo '<tr><td colspan="5" class="info"><i class="fa fa-info-circle"></i> Keine Rechnungen/Quittungen</td></tr>';
+                                    echo '<tr class="info"><td colspan="5"><i class="fa fa-info-circle"></i> Keine Rechnungen/Quittungen</td></tr>';
                                 }
 
                                                    echo '
@@ -160,6 +166,9 @@
                                                 </table>
                                             </td>'.
                                         '</tr>';
+                            }
+                            } else {
+                                echo '<tr class="info"><td colspan="8">Keine Daten verfügbar</td></tr>';
                             }
                         @endphp
                         </tbody>
@@ -186,16 +195,21 @@
                             </thead>
                             <tbody>
                             @php
+
                                 $total = 0;
+                                if (count($data['expenses'])) {
                                 foreach($data['expenses'] as $expense) {
                                     $total += $expense->price;
                                     echo    '<tr>' .
                                                 '<td>'.sprintf('%04d', $counter++).'</td>' .
                                                 '<td>'.$expense->id.'</td>' .
                                                 '<td>'.$expense->title.'</td>' .
-                                                '<td>'.$expense->price.'</td>' .
-                                                '<td>'.$expense->date.'</td>' .
+                                                '<td>'.$expense->getPrice().'</td>' .
+                                                '<td>'.$expense->getDate().'</td>' .
                                             '</tr>';
+                                }
+                                } else {
+                                    echo '<tr class="info"><td colspan="5">Keine Daten verfügbar</td></tr>';
                                 }
                             @endphp
                             </tbody>

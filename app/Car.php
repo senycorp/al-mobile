@@ -129,11 +129,11 @@ class Car extends Model
         if ($this->conflicts) return $this->conflicts;
 
         $conflicts = [];
-        if ($this->sale_date) {
-            foreach ($this->invoices()->get() as $invoice) {
-                if (!(new Date($this->sale_date))->greaterThanOrEqualTo(new Date($invoice->date))) {
-                    $conflicts[] = $invoice;
-                }
+        foreach ($this->invoices()->get() as $invoice) {
+            if ((new Date($this->purchase_date))->greaterThan(new Date($invoice->date))) {
+                $conflicts[] = $invoice;
+            } else if($this->sale_date && !(new Date($this->sale_date))->greaterThanOrEqualTo(new Date($invoice->date))) {
+                $conflicts[] = $invoice;
             }
         }
 

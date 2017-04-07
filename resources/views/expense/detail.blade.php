@@ -64,9 +64,10 @@
                         <div class="panel-body">
                             @if ($expense->hasConflict())
                                 <div class="alert alert-danger" role="alert">
-                                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
                                     <span class="sr-only">Error:</span>
-                                    Bitte korrigieren: Verkaufsdatum des Fahrzeugs <b>{{$expense->car->getSaleDate()}}</b>
+                                    <h4><i class="fa fa-warning"></i> Bitte korrigieren</h4>
+                                        Datum der Quittung muss zwischen dem <b>{{$expense->car->getPurchaseDate()}}</b> und <b>{{$expense->car->getSaleDate()}}</b> liegen. Deshalb ist
+                                    <b>{{$expense->getDate()}}</b> kein valides Datum.
                                 </div>
                                 <hr/>
                             @endif
@@ -167,7 +168,8 @@
     $(function() {
         $('#date').datepicker({
             language: 'de',
-            maxDate: @if ($expense->car && $expense->car->sale_date) new Date('{{$expense->car->sale_date}}') @else new Date() @endif,
+            @if ($expense->car && $expense->car->purchase_date) minDate:  new Date('{{$expense->car->purchase_date}}') @endif,
+            @if ($expense->car && $expense->car->sale_date) maxDate: new Date('{{$expense->car->sale_date}}') @else maxDate: new Date() @endif,
         });
     });
 </script>

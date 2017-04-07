@@ -49,6 +49,14 @@ class CarController extends Controller
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function create(Request $request) {
+        $this->validate($request, [
+            'title' => 'required',
+            'purchase_date' => 'required',
+            'purchase_price' => 'required',
+            'chassis_number' => 'required|unique:cars|max:6|min:6',
+            'mobile_id' => 'nullable|unique:cars',
+        ]);
+
         $data = $request->toArray();
         $data['user_id'] = Auth::user()->id;
 
@@ -63,12 +71,28 @@ class CarController extends Controller
      * @param $id
      */
     public function sellCar(Request $request, $id) {
+        $car = Car::findOrFail($id);
+        $request['sale_date'] = (new Date($request['sale_date']))->format('Y-m-d');
+        $request['purchase_date'] = $car->purchase_date;
+        $this->validate($request, [
+            'sale_date' => 'required|date|after_or_equal:purchase_date',
+            'sale_price' => 'required'
+        ]);
         Car::findOrFail($id)->fill($request->toArray())->save();
 
         return redirect()->back();
     }
 
     public function createInvoice(Request $request, $id) {
+        $car = Car::findOrFail($id);
+        $request['purchase_date'] = $car->purchase_date;
+        $this->validate($request, [
+            'invoice_title' => 'required',
+            'invoice_price' => 'required|numeric',
+            'invoice_date'  => 'required|date|before_or_equal:purchase_date',
+            'invoice_description' => 'nullable'
+        ]);
+
         Car::find($id)->invoices()->create([
             'title' => $request->get('invoice_title'),
             'price' => $request->get('invoice_price'),
