@@ -14,7 +14,7 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{asset('datatables/datatables.css')}}">
     <link rel="stylesheet" type="text/css" href="{{asset('air-datepicker/css/datepicker.min.css')}}">
-    <link rel="stylesheet" type="text/css"; media="print" href="{{asset('css/print.css')}}">
+    <link rel="stylesheet" type="text/css" media="print" href="{{asset('css/print.css')}}">
     <!-- Scripts -->
     <script>
         window.Laravel = {!! json_encode([

@@ -25,6 +25,7 @@ class CreateCarsTable extends Migration
             $table->decimal('purchase_price');
             $table->date('sale_date')->nullable();
             $table->decimal('sale_price')->nullable();
+            $table->boolean('tax');
             $table->integer('user_id')->unsigned()->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();

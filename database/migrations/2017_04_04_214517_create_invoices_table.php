@@ -22,13 +22,14 @@ class CreateInvoicesTable extends Migration
             $table->decimal('price');
             $table->text('description')->nullable();
 
-            $table->integer('user_id')->unsigned()->nullable();
+            $table->integer('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->integer('car_id')->unsigned()->nullable();
             $table->foreign('car_id')->references('id')->on('cars')->onDelete('cascade');
             $table->integer('invoice_type_id')->unsigned()->nullable();
             $table->foreign('invoice_type_id')->references('id')->on('invoice_types')->onDelete('set null');
-
+            $table->boolean('purchase_invoice')->nullable()->default(0);
+            $table->boolean('sale_invoice')->nullable()->default(0);
             $table->date('date');
             $table->timestamps();
 

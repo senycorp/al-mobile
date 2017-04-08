@@ -35,6 +35,10 @@
                                     <td>Einkaufspreis</td>
                                     <td>{{$car->getPurchasePrice()}}</td>
                                 </tr>
+                                <tr>
+                                    <td>§25a</td>
+                                    <td>{{($car->tax ? 'Ja' : 'Nein')}}</td>
+                                </tr>
                                 @if ($car->sale_date)
                                     <tr>
                                         <td>Verkaufsdatum</td>

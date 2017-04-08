@@ -58,9 +58,14 @@
                             <li {!!  Request::is('/') ? 'class="active"' : '' !!}><a href="{{ route('dashboard') }}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
                             <li {!!  Request::is('car') || Request::is('car/*') ? 'class="active"' : '' !!}}><a href="{{ route('car_index') }}"><i class="fa fa-car"></i> Autos</a></li>
                             <li {!!  Request::is('carStock') ? 'class="active"' : '' !!}}><a href="{{ route('car_index_stock') }}"><i class="fa fa-bank"></i> Bestand</a></li>
-                            <li {!!  Request::is('expense*') ? 'class="active"' : '' !!}}><a href="{{ route('expense_index') }}"><i class="fa fa-euro"></i> Aufwände</a></li>
+                            <li {!!  Request::is('expense*') ? 'class="active"' : '' !!}}><a href="{{ route('expense_index') }}"><i class="fa fa-euro"></i> Rechnungen</a></li>
                             <li {!!  Request::is('report') ? 'class="active"' : '' !!}}><a href="{{ route('report') }}"><i class="fa fa-area-chart"></i> Reports</a></li>
                             <li><a href="javascript:void(0)">|</a></li>
+
+                            <li>
+                                <a href="#">
+                                <i class="fa fa-bank"></i>
+                                {{ \App\Formatter::currency(\Illuminate\Support\Facades\DB::select('SELECT SUM(price) AS su FROM invoices WHERE TRUE;')[0]->su) }}</a></li>
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                                     <i class="fa fa-user-circle"></i> {{ Auth::user()->name }} <span class="caret"></span>
@@ -71,7 +76,7 @@
                                         <a href="{{ route('logout') }}"
                                             onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
-                                            Logout
+                                            <i class="fa fa-sign-out"></i> Logout
                                         </a>
 
                                         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">

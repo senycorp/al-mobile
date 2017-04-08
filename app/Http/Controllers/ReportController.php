@@ -35,24 +35,23 @@ class ReportController extends Controller
         $fromDate = (new Date(request('from_date')))->format('Y-m-d');
         $toDate = (new Date(request('to_date')))->format('Y-m-d');
 
-        $purchasedCars = Car::query()->where(function(\Illuminate\Database\Eloquent\Builder $query) use($fromDate, $toDate) {
-            $query->whereBetween('purchase_date', [$fromDate, $toDate]);
-        })->orderBy('purchase_date', 'ASC')->get();
-
-        $selledCars = Car::query()->where(function(\Illuminate\Database\Eloquent\Builder $query) use($fromDate, $toDate) {
-            $query->whereBetween('sale_date', [$fromDate, $toDate]);
-        })->get();
+//        $purchasedCars = Car::query()->where(function(\Illuminate\Database\Eloquent\Builder $query) use($fromDate, $toDate) {
+//            $query->whereBetween('purchase_date', [$fromDate, $toDate]);
+//        })->orderBy('purchase_date', 'ASC')->get();
+//
+//        $selledCars = Car::query()->where(function(\Illuminate\Database\Eloquent\Builder $query) use($fromDate, $toDate) {
+//            $query->whereBetween('sale_date', [$fromDate, $toDate]);
+//        })->get();
 
         $expenses = Invoice::query()->where(function(\Illuminate\Database\Eloquent\Builder $query) use($fromDate, $toDate) {
             $query->whereBetween('date', [$fromDate, $toDate]);
-            $query->whereNull('car_id');
-        })->get();
+        })->orderBy('date')->get();
 
+        $cashBefore = DB::select('SELECT sum(price) AS cashBefore FROM invoices WHERE date < \'' . $fromDate . '\';')[0]->cashBefore;
 
         return view('report.index', ['data' => [
-            'purchased' => $purchasedCars,
-            'selled' => $selledCars,
-            'expenses' => $expenses
+            'cashBefore' => $cashBefore,
+            'expenses' => $expenses,
         ]]);
     }
 }

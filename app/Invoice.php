@@ -25,6 +25,8 @@ class Invoice extends Model
         'invoice_type_id',
         'date',
         'user_id',
+        'purchase_invoice',
+        'sale_invoice',
     ];
 
     /**

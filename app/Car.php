@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 use Jenssegers\Date\Date;
 
 /**
@@ -27,7 +28,8 @@ class Car extends Model
         'sale_date',
         'sale_price',
         'user_id',
-        'mobile_id'
+        'mobile_id',
+        'tax'
     ];
 
     /**
@@ -105,6 +107,33 @@ class Car extends Model
      */
     public function getPurchasePrice() {
         return Formatter::currency($this->purchase_price);
+    }
+
+    public function sell($date, $price) {
+        $this->fill([
+            'sale_date' => $date,
+            'sale_price' => $price,
+        ])->save();
+
+        $this->invoices()->create([
+            'title' => 'Verkaufsbeleg',
+            'price' => $this->sale_price,
+            'date' => $this->sale_date,
+            'description' => 'Verkaufsbeleg für ' . $this->title . ' mit FG ' . $this->chassis_number,
+            'sale_invoice' => 1,
+            'user_id' => Auth::user()->id
+        ]);
+    }
+
+    public function getTaxIdentifier() {
+        if ($this->tax)
+            return '§25a';
+
+        return '19%';
+    }
+
+    public function is25(){
+        return ($this->tax) ? 'Ja' : 'Nein';
     }
 
     /**

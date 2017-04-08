@@ -53,7 +53,8 @@ $factory->define(App\Car::class, function (Faker\Generator $faker) {
         ]),
         'chassis_number' => strtoupper(randString(6)),
         'purchase_date' => $faker->dateTimeBetween('-1 year', '-1 month'),
-        'purchase_price' => $faker->numberBetween(1000, 20000)
+        'purchase_price' => $faker->numberBetween(1000, 20000),
+        'tax' => $faker->boolean
     ];
 });
 

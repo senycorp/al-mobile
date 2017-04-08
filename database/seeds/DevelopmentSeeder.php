@@ -1,6 +1,7 @@
 <?php
 
 use App\Car;
+use App\Invoice;
 use App\User;
 use Illuminate\Database\Seeder;
 use Jenssegers\Date\Date;
@@ -27,9 +28,18 @@ class DevelopmentSeeder extends Seeder
         ]);
 
         // Generate unselled cars
-        $unselledCars = factory(Car::class, 7500)->create([
+        $unselledCars = factory(Car::class, 10)->create([
             'user_id' => $user->id
         ])->each(function (Car $car) use ($user) {
+            $car->invoices()->create([
+                'title' => 'Einkaufsbeleg',
+                'price' => -$car->purchase_price,
+                'date' => $car->purchase_date,
+                'description' => 'Einkaufsbeleg für ' . $car->title . ' mit FG ' . $car->chassis_number,
+                'purchase_invoice' => 1,
+                'user_id' => $user->id
+            ]);
+
             // Generate invoices for car
             factory(\App\Invoice::class, 20)->create([
                 'car_id' => $car->id,
@@ -37,7 +47,7 @@ class DevelopmentSeeder extends Seeder
             ]);
         });
 
-        $selledCars = factory(Car::class, 7500   )->create([
+        $selledCars = factory(Car::class, 10)->create([
             'user_id' => $user->id
         ])->each(function (Car $car) use ($user, $faker) {
             $car->fill([
@@ -45,6 +55,15 @@ class DevelopmentSeeder extends Seeder
                 'sale_price' => $car->purchase_price + $faker->numberBetween(1000, 20000)
             ])->save();
 
+            $car->invoices()->create([
+                'title' => 'Verkaufsbeleg',
+                'price' => -$car->sale_price,
+                'date' => $car->sale_date,
+                'description' => 'Einkaufsbeleg für ' . $car->title . ' mit FG ' . $car->chassis_number,
+                'sale_invoice' => 1,
+                'user_id' => $user->id
+            ]);
+
             // Generate invoices for car
             factory(\App\Invoice::class, 20)->create([
                 'car_id' => $car->id,
@@ -52,8 +71,11 @@ class DevelopmentSeeder extends Seeder
             ]);
         });
 
-        $invoices = factory(\App\Invoice::class, 7500)->create([
-            'user_id' => $user->id
-        ]);
+        $invoices = factory(\App\Invoice::class, 100)->create([
+            'user_id' => $user->id,
+            'price' =>  0.0
+        ])->each(function (Invoice $invoice) {
+            $invoice->fill(['price' => random_int(-1000, 1000)])->save();
+        });
     }
 }

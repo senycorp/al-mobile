@@ -40,6 +40,8 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             Informationen
+
+                            {{ \App\Formatter::currency(\Illuminate\Support\Facades\DB::select('SELECT SUM(price) AS su FROM invoices WHERE date <= \'' . $expense->date . '\';')[0]->su) }}
                         </div>
 
                         <div class="table-responsive">

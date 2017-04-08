@@ -55,132 +55,51 @@
                     den Datenbestand von dem <b>{{\App\Formatter::date(request('from_date'))}}</b> bis zum <b>{{\App\Formatter::date(request('to_date'))}}</b>.
                 </div>
             </div>
+
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <span class="badge">{{count($data['purchased'])}}</span> Gekaufte Fahrzeuge
-                </div>
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>ID</th>
-                                <th>Bezeichnung</th>
-                                <th>Fahrgestellnummer</th>
-                                <th>E-Datum</th>
-                                <th>E-Preis</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @php
-                            if (count($data['purchased'])) {
-                                $counter = 0;
-                                $total = 0;
-                                foreach($data['purchased'] as $pCar) {
-                                    $total += $pCar->purchase_price;
-                                    echo    '<tr>' .
-                                                '<td>'.sprintf('%04d', $counter++).'</td>' .
-                                                '<td>'.$pCar->id.'</td>' .
-                                                '<td>'.$pCar->title.'</td>' .
-                                                '<td>'.$pCar->chassis_number.'</td>' .
-                                                '<td>'.$pCar->getPurchaseDate().'</td>' .
-                                                '<td>'.$pCar->getPurchasePrice().'</td>' .
-                                            '</tr>';
-                                }
-                            } else {
-                                echo '<tr class="info"><td colspan="6">Keine Daten verfügbar</td></tr>';
-                            }
-                            @endphp
-                        </tbody>
-                    </table>
-                    <div class="panel-body" style="text-align:right">
-                        <span class="badge">Summe: {{\App\Formatter::currency($total)}}</span>
-                    </div>
-                </div>
-            </div>
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <span class="badge">{{count($data['selled'])}}</span> Verkaufte Fahrzeuge
+                    Autos
                 </div>
                 <div class="table-responsive">
                     <table class="table table-striped">
                         <thead>
                         <tr>
-                            <th>#</th>
                             <th>ID</th>
                             <th>Bezeichnung</th>
-                            <th>Fahrgestellnummer</th>
-                            <th>E-Datum</th>
-                            <th>E-Preis</th>
-                            <th>V-Datum</th>
-                            <th>V-Preis</th>
+                            <th>Chassis</th>
+                            <th>EK-Datum</th>
+                            <th>EK-Preis</th>
+                            <th>VK-Datum</th>
+                            <th>VK-Preis</th>
                         </tr>
                         </thead>
                         <tbody>
                         @php
-                            $total = 0;
-                            if (count($data['selled'])) {
-
-                            foreach($data['selled'] as $sCar) {
-                                $total += $sCar->sale_price;
-                                echo    '<tr>' .
-                                            '<td>'.sprintf('%04d', $counter++).'</td>' .
-                                            '<td>'.$sCar->id.'</td>' .
-                                            '<td>'.$sCar->title.'</td>' .
-                                            '<td>'.$sCar->chassis_number.'</td>' .
-                                            '<td>'.$sCar->getPurchaseDate().'</td>' .
-                                            '<td>'.$sCar->getPurchasePrice().'</td>' .
-                                            '<td>'.$sCar->getSaleDate().'</td>' .
-                                            '<td>'.$sCar->getSalePrice().'</td>' .
-                                        '</tr>' .
-                                        '<tr>'.
-                                            '<td></td>'.
-                                            '<td colspan="7" style="padding:0">
-                                                <table class="table table-condensed" style="margin-bottom:0">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>#</th>
-                                                            <th>ID</th>
-                                                            <th>Bezeichnung</th>
-                                                            <th>Betrag</th>
-                                                            <th>Datum</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>';
-                                if (count($sCar->invoices)) {
-                                    foreach ($sCar->invoices()->orderBy('date')->get() AS $invoice) {
-                                    echo '<tr '.(($invoice->hasConflict()) ? 'class="danger"' : '').'>
-                                            <td>'.sprintf('%04d', $counter++).'</td>
-                                                            <td>'.$invoice->id.'</td>
-                                                            <td>'.$invoice->title.'</td>
-                                                            <td>'.$invoice->getPrice().'</td>
-                                                            <td>'.$invoice->getDate().'</td>
-                                            </tr>';
-                                    }
-                                } else {
-                                    echo '<tr class="info"><td colspan="5"><i class="fa fa-info-circle"></i> Keine Rechnungen/Quittungen</td></tr>';
+                            $ids = [];
+                        
+                            foreach($data['expenses'] as $expense) {
+                                if ($expense->car_id && !in_array($expense->car_id, $ids)) {
+                                    echo '<tr>
+                                <td>'.$expense->car->id.'</td>
+                                <td>'.$expense->car->title.'</td>
+                                <td>'.$expense->car->chassis_number.'</td>
+                                <td>'.$expense->car->purchase_date.'</td>
+                                <td>'.$expense->car->purchase_price.'</td>
+                                <td>'.$expense->car->sale_date.'</td>
+                                <td>'.$expense->car->sale_price.'</td>
+                            </tr>';
                                 }
 
-                                                   echo '
-                                                    </tbody>
-                                                </table>
-                                            </td>'.
-                                        '</tr>';
-                            }
-                            } else {
-                                echo '<tr class="info"><td colspan="8">Keine Daten verfügbar</td></tr>';
+                                $ids[] =$expense->car_id;
                             }
                         @endphp
                         </tbody>
                     </table>
-                    <div class="panel-body" style="text-align:right">
-                        <span class="badge">Summe: {{\App\Formatter::currency($total)}}</span>
-                    </div>
                 </div>
             </div>
             <div class="panel panel-default">
                     <div class="panel-heading">
-                        <span class="badge">{{count($data['expenses'])}}</span> Sonstige Ausgaben
+                        <span class="badge">{{count($data['expenses'])}}</span> Rechnungen/Quittungen
                     </div>
                     <div class="table-responsive">
                         <table class="table table-striped">
@@ -188,26 +107,41 @@
                             <tr>
                                 <th>#</th>
                                 <th>ID</th>
+                                <th>FG</th>
                                 <th>Bezeichnung</th>
                                 <th>Betrag</th>
+                                <th></th>
                                 <th>Datum</th>
+                                <th>Kassenstand</th>
                             </tr>
                             </thead>
                             <tbody>
+                                <tr>
+                                    <td>###</td>
+                                    <td>###</td>
+                                    <td>###</td>
+                                    <td>Kassenstand: Übertrag</td>
+                                    <td>{{\App\Formatter::currency($data['cashBefore'])}}</td>
+                                    <td>bis aussschließlich {{request('from_date')}}</td>
+                                    <td>{{\App\Formatter::currency($data['cashBefore'])}}</td>
+                                </tr>
                             @php
-
-                                $total = 0;
                                 if (count($data['expenses'])) {
-                                foreach($data['expenses'] as $expense) {
-                                    $total += $expense->price;
-                                    echo    '<tr>' .
-                                                '<td>'.sprintf('%04d', $counter++).'</td>' .
-                                                '<td>'.$expense->id.'</td>' .
-                                                '<td>'.$expense->title.'</td>' .
-                                                '<td>'.$expense->getPrice().'</td>' .
-                                                '<td>'.$expense->getDate().'</td>' .
-                                            '</tr>';
-                                }
+                                    $counter = 0;
+                                    $cashBefore = $data['cashBefore'];
+                                    foreach($data['expenses'] as $expense) {
+                                        echo    '<tr '.(($expense->hasConflict()) ? 'class="danger"' : null).'>' .
+                                                    '<td>'.sprintf('%04d', $counter++).'</td>' .
+                                                    '<td><a href="'.route('expense_detail', ['id' => $expense->id]).'" target="_blank">'.$expense->id.'</a></td>' .
+                                                    '<td>'.(($expense->car_id) ? $expense->car->chassis_number : null).'</td>' .
+                                                    '<td>'.$expense->title.'</td>' .
+                                                    '<td>'.$expense->getPrice() . '</td>' .
+                                                    '<td>'.($expense->sale_invoice || $expense->purchase_invoice ?  $expense->car->getTaxIdentifier()  : '').'</td>'.
+                                                    '<td>'.$expense->getDate().'</td>' .
+                                                    '<td>'.(\App\Formatter::currency($cashBefore + ($expense->price))).'</td>' .
+                                                '</tr>';
+                                            $cashBefore = $cashBefore + ($expense->price);
+                                    }
                                 } else {
                                     echo '<tr class="info"><td colspan="5">Keine Daten verfügbar</td></tr>';
                                 }
@@ -215,7 +149,7 @@
                             </tbody>
                         </table>
                         <div class="panel-body" style="text-align:right">
-                            <span class="badge">Summe: {{\App\Formatter::currency($total)}}</span>
+                            <span class="badge">Summe: {{\App\Formatter::currency($cashBefore)}}</span>
                         </div>
                     </div>
             </div>

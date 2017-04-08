@@ -55,12 +55,22 @@ class CarController extends Controller
             'purchase_price' => 'required',
             'chassis_number' => 'required|unique:cars|max:6|min:6',
             'mobile_id' => 'nullable|unique:cars',
+            'tax' => 'required'
         ]);
 
         $data = $request->toArray();
         $data['user_id'] = Auth::user()->id;
 
         $car = Car::create($data);
+
+        $car->invoices()->create([
+            'title' => 'Einkaufsbeleg',
+            'price' => -$car->purchase_price,
+            'date' => $car->purchase_date,
+            'description' => 'Einkaufsbeleg für ' . $car->title . ' mit FG ' . $car->chassis_number,
+            'purchase_invoice' => 1,
+            'user_id' => Auth::user()->id
+        ]);
 
         return redirect('/car/' . $car->id);
     }
@@ -78,7 +88,8 @@ class CarController extends Controller
             'sale_date' => 'required|date|after_or_equal:purchase_date',
             'sale_price' => 'required'
         ]);
-        Car::findOrFail($id)->fill($request->toArray())->save();
+
+        Car::findOrFail($id)->sell($request['sale_date'], $request['sale_price']);
 
         return redirect()->back();
     }
