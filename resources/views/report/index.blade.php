@@ -146,9 +146,9 @@
                                     <td>{!! \App\Formatter::indicatedCurrency($data['cashBefore']) !!}</td>
                                 </tr>
                             @php
+                                $cashBefore = $data['cashBefore'];
                                 if (count($data['expenses'])) {
                                     $counter = 0;
-                                    $cashBefore = $data['cashBefore'];
                                     foreach($data['expenses'] as $expense) {
                                         echo    '<tr '.(($expense->hasConflict()) ? 'class="danger"' : null).'>' .
                                                     '<td>'.sprintf('%04d', $counter++).'</td>' .
@@ -165,7 +165,7 @@
                                                 $cashBefore = $cashBefore + ($expense->price);
                                     }
                                 } else {
-                                    echo '<tr class="info"><td colspan="5">Keine Daten verfügbar</td></tr>';
+                                    echo '<tr class="info"><td colspan="8">Keine Daten verfügbar</td></tr>';
                                 }
                             @endphp
                             </tbody>
