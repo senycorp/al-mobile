@@ -13,6 +13,10 @@ input, textarea {
 textarea {
     font-size: 10px !important;
     color: grey !important;
+    overflow: visible !important;
+    resize: none;
+    height: auto;
+    page-break-inside: avoid !important;
 }
 
 @page {

@@ -28,7 +28,8 @@ class Invoice extends Model
         'purchase_invoice',
         'sale_invoice',
         'tax',
-        'account'
+        'account',
+        'invoice_data'
     ];
 
     public function isAssigned() {

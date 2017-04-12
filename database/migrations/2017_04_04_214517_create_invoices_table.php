@@ -31,6 +31,7 @@ class CreateInvoicesTable extends Migration
             $table->boolean('purchase_invoice')->nullable()->default(0);
             $table->boolean('sale_invoice')->nullable()->default(0);
             $table->boolean('account')->nullable()->default(0);
+            $table->longText('invoice_data')->nullable();
             $table->date('date');
             $table->boolean('tax')->default(false);
             $table->timestamps();

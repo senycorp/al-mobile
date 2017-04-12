@@ -48,8 +48,6 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             Informationen
-
-                            {{ \App\Formatter::currency(\Illuminate\Support\Facades\DB::select('SELECT SUM(price) AS su FROM invoices WHERE date <= \'' . $expense->date . '\';')[0]->su) }}
                         </div>
 
                         <div class="table-responsive">
@@ -88,6 +86,10 @@
                             @if (!$expense->purchase_invoice)
                             <a class="btn btn-block btn-danger" href="{{route('expense_delete', ['id' => $expense->id])}}"><i class="fa fa-trash"></i> Rechnung löschen</a>
                             @endif
+
+                                @if ($expense->price > 0 && !$expense->sale_invoice)
+                                    <a class="btn btn-block btn-primary" href="{{route('expense_invoice', ['id' => $expense->id])}}"><i class="fa fa-file-text-o"></i> Rechnung erstellen</a>
+                                @endif
                         </div>
                     </div>
                 </div>

@@ -134,3 +134,44 @@ Route::post('/car/{id}/invoicep', function($id) {
 
     return response('', 200);
 })->name('car_save_invoice');
+
+Route::get('/expense/{id}/invoicep', function($id) {
+    $invoice = \App\Invoice::find($id);
+
+    $data = [
+        'title' => $invoice->getTitle(),
+        'invoice_no' => $invoice->id,
+        'id' => $invoice->id,
+        'price' => $invoice->price,
+        'date' => $invoice->date,
+        'tax' => $invoice->tax,
+        'description' => $invoice->description,
+        'buyer' => [
+            'name' => null,
+            'street' => null,
+            'location' => null,
+            'country' => 'Deutschland'
+        ],
+    ];
+
+    if ($invoice->invoice_data) {
+        $data2 = json_decode($invoice->invoice_data, true);
+        $data['buyer'] = $data2['buyer'];
+        $data['title'] = $data2['title'];
+        $data['description'] = $data2['description'];
+    }
+
+    return view('expense.invoice', [
+        'data' => $data
+    ]);
+})->name('expense_invoice');
+
+Route::post('/expense/{id}/invoicep', function($id) {
+    $invoice = \App\Invoice::find($id);
+
+    $invoice->fill([
+        'invoice_data' => json_encode(request()->toArray())
+    ])->save();
+
+    return response('', 200);
+})->name('expense_save_invoice');
