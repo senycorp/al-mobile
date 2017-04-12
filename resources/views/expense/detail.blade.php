@@ -87,93 +87,131 @@
                             <a class="btn btn-block btn-danger" href="{{route('expense_delete', ['id' => $expense->id])}}"><i class="fa fa-trash"></i> Rechnung löschen</a>
                             @endif
 
-                                @if ($expense->price > 0 && !$expense->sale_invoice)
+                            @if ($expense->price > 0)
+                                @if ($expense->sale_invoice)
+                                        <a class="btn btn-block btn-primary" href="{{route('car_invoice', ['id' => $expense->car_id])}}"><i class="fa fa-file-text-o"></i> Rechnung erstellen</a>
+                                @else
                                     <a class="btn btn-block btn-primary" href="{{route('expense_invoice', ['id' => $expense->id])}}"><i class="fa fa-file-text-o"></i> Rechnung erstellen</a>
                                 @endif
+                            @endif
                         </div>
                     </div>
                 </div>
-                <div class="col-md-12">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">Rechnung/Quittung aktualisieren</div>
 
-                        <div class="panel-body">
-                            <form class="form-horizontal" role="form" method="POST" action="{{ route('expense_update', ['id' => $expense->id]) }}">
-                                {{ csrf_field() }}
+                @if ($expense->purchase_invoice || $expense->sale_invoice )
+                    <div class="col-md-12">
+                        <div class="alert alert-info">
+                            <h4><i class="fa fa-info"></i> Information</h4>
+                            Diese Rechnung kann nicht bearbeitet werden, da es ein Einkaufs/Verkaufs-Beleg für das Fahrzeug <strong>{{$expense->car->title}}</strong> ist.
+                        </div>
+                    </div>
+                @else
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">Rechnung/Quittung aktualisieren</div>
 
-                                <div class="form-group{{ $errors->has('title') ? ' has-error' : '' }}">
-                                    <label for="title" class="col-md-4 control-label">Bezeichnung</label>
+                            <div class="panel-body">
+                                <form class="form-horizontal" role="form" method="POST" action="{{ route('expense_update', ['id' => $expense->id]) }}">
+                                    {{ csrf_field() }}
 
-                                    <div class="col-md-6">
-                                        <input id="title" type="text" class="form-control" name="title" value="{{ $expense->title }}" required autofocus>
+                                    <div class="form-group{{ $errors->has('title') ? ' has-error' : '' }}">
+                                        <label for="title" class="col-md-4 control-label">Bezeichnung</label>
 
-                                        @if ($errors->has('title'))
-                                            <span class="help-block">
+                                        <div class="col-md-6">
+                                            <input id="title" type="text" class="form-control" name="title" value="{{ $expense->title }}" required autofocus>
+
+                                            @if ($errors->has('title'))
+                                                <span class="help-block">
                                         <strong>{{ $errors->first('title') }}</strong>
                                     </span>
-                                        @endif
+                                            @endif
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class="form-group{{ $errors->has('price') ? ' has-error' : '' }}">
-                                    <label for="price" class="col-md-4 control-label">Betrag</label>
+                                    <div class="form-group{{ $errors->has('price') ? ' has-error' : '' }}">
+                                        <label for="price" class="col-md-4 control-label">Betrag</label>
 
-                                    <div class="col-md-6">
-                                        <input id="price" type="number" class="form-control" name="price" value="{{ $expense->price }}" required autofocus>
+                                        <div class="col-md-6">
+                                            <input id="price" type="number" class="form-control" name="price" value="{{ $expense->price }}" required autofocus>
 
-                                        @if ($errors->has('price'))
-                                            <span class="help-block">
+                                            @if ($errors->has('price'))
+                                                <span class="help-block">
                                         <strong>{{ $errors->first('price') }}</strong>
                                     </span>
-                                        @endif
+                                            @endif
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class="form-group{{ $errors->has('date') ? ' has-error' : '' }}">
-                                    <label for="date" class="col-md-4 control-label">Datum</label>
+                                    <div class="form-group{{ $errors->has('date') ? ' has-error' : '' }}">
+                                        <label for="date" class="col-md-4 control-label">Datum</label>
 
-                                    <div class="col-md-6">
-                                        <input id="date"
-                                               type="text"
-                                               class="form-control"
-                                               name="date"
-                                               value="{{ $expense->getDate() }}"
-                                               readonly
-                                               required autofocus>
+                                        <div class="col-md-6">
+                                            <input id="date"
+                                                   type="text"
+                                                   class="form-control"
+                                                   name="date"
+                                                   value="{{ $expense->getDate() }}"
+                                                   readonly
+                                                   required autofocus>
 
-                                        @if ($errors->has('date'))
-                                            <span class="help-block">
+                                            @if ($errors->has('date'))
+                                                <span class="help-block">
                                         <strong>{{ $errors->first('date') }}</strong>
                                     </span>
-                                        @endif
+                                            @endif
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class="form-group{{ $errors->has('date') ? ' has-error' : '' }}">
-                                    <label for="description" class="col-md-4 control-label">Beschreibung</label>
+                                    <div class="form-group{{ $errors->has('tax') ? ' has-error' : '' }}">
+                                        <label for="tax" class="col-md-4 control-label">Besteuerung</label>
+                                        <div class="checkbox col-md-6">
+                                            <label>
+                                                <input type="radio" name="tax" id="p25" checked="checked" value="1"> §25a
+                                            </label>
+                                            <label>
+                                                <input type="radio" name="tax" id="p19" value="0"> 19% MwSt.
+                                            </label>
+                                        </div>
+                                    </div>
 
-                                    <div class="col-md-6">
-                                        <textarea id="description" class="form-control" name="description">{{ $expense->description }}</textarea>
+                                    <div class="form-group{{ $errors->has('account') ? ' has-error' : '' }}">
+                                        <label for="tax" class="col-md-4 control-label">Bankkonto</label>
+                                        <div class="checkbox col-md-6">
+                                            <label>
+                                                <input type="radio" name="account" checked="checked" value="1"> Ja
+                                            </label>
+                                            <label>
+                                                <input type="radio" name="account" value="0" checked="checked"> Nein
+                                            </label>
+                                        </div>
+                                    </div>
 
-                                        @if ($errors->has('description'))
-                                            <span class="help-block">
+                                    <div class="form-group{{ $errors->has('date') ? ' has-error' : '' }}">
+                                        <label for="description" class="col-md-4 control-label">Beschreibung</label>
+
+                                        <div class="col-md-6">
+                                            <textarea id="description" class="form-control" name="description">{{ $expense->description }}</textarea>
+
+                                            @if ($errors->has('description'))
+                                                <span class="help-block">
                                         <strong>{{ $errors->first('description') }}</strong>
                                     </span>
-                                        @endif
+                                            @endif
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class="form-group">
-                                    <div class="col-md-6 col-md-offset-4">
-                                        <button type="submit" class="btn btn-primary btn-block">
-                                            <i class="glyphicon glyphicon-plus-sign"></i> Aktualisieren
-                                        </button>
+                                    <div class="form-group">
+                                        <div class="col-md-6 col-md-offset-4">
+                                            <button type="submit" class="btn btn-primary btn-block">
+                                                <i class="glyphicon glyphicon-plus-sign"></i> Aktualisieren
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
-                            </form>
+                                </form>
+                            </div>
                         </div>
                     </div>
-                </div>
+                @endif
             </div>
         </div>
     </div>

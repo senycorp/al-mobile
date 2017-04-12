@@ -162,35 +162,35 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">Bestand</div>
-                <div class="panel-body" style="overflow-x: hidden">
-                    <div class="table-responsive">
-                        <table class="table table-striped vertical" id="car_stock_table">
-                            <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Bezeichnung</th>
-                                <th>Fahrgestellnummer</th>
-                                <th>E-Datum</th>
-                                <th>E-Preis</th>
-                                <th>Aktionen</th>
-                            </tr>
-                            </thead>
-                            <tfoot>
-                            <td></td>
-                            <td class="no-search"></td>
-                            <td></td>
-                            <td class="no-search"></td>
-                            <td class="no-search"></td>
-                            <td class="no-search"></td>
-                            </tfoot>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
+        {{--<div class="col-md-12">--}}
+            {{--<div class="panel panel-default">--}}
+                {{--<div class="panel-heading">Bestand</div>--}}
+                {{--<div class="panel-body" style="overflow-x: hidden">--}}
+                    {{--<div class="table-responsive">--}}
+                        {{--<table class="table table-striped vertical" id="car_stock_table">--}}
+                            {{--<thead>--}}
+                            {{--<tr>--}}
+                                {{--<th>ID</th>--}}
+                                {{--<th>Bezeichnung</th>--}}
+                                {{--<th>Fahrgestellnummer</th>--}}
+                                {{--<th>E-Datum</th>--}}
+                                {{--<th>E-Preis</th>--}}
+                                {{--<th>Aktionen</th>--}}
+                            {{--</tr>--}}
+                            {{--</thead>--}}
+                            {{--<tfoot>--}}
+                            {{--<td></td>--}}
+                            {{--<td class="no-search"></td>--}}
+                            {{--<td></td>--}}
+                            {{--<td class="no-search"></td>--}}
+                            {{--<td class="no-search"></td>--}}
+                            {{--<td class="no-search"></td>--}}
+                            {{--</tfoot>--}}
+                        {{--</table>--}}
+                    {{--</div>--}}
+                {{--</div>--}}
+            {{--</div>--}}
+        {{--</div>--}}
     </div>
 </div>
 @endsection
@@ -288,76 +288,76 @@
             }
         });
 
-        $('#car_stock_table').DataTable({
-            processing: true,
-            serverSide: true,
-            //responsive: true,
-            fixedHeader: true,
-            stateSave: true,
-            language: {
-                "sEmptyTable":      "Keine Daten in der Tabelle vorhanden",
-                "sInfo":            "_START_ bis _END_ von _TOTAL_ Einträgen",
-                "sInfoEmpty":       "0 bis 0 von 0 Einträgen",
-                "sInfoFiltered":    "(gefiltert von _MAX_ Einträgen)",
-                "sInfoPostFix":     "",
-                "sInfoThousands":   ".",
-                "sLengthMenu":      "_MENU_ Einträge anzeigen",
-                "sLoadingRecords":  "Wird geladen...",
-                "sProcessing":      "Bitte warten...",
-                "sSearch":          "Suchen",
-                "sZeroRecords":     "Keine Einträge vorhanden.",
-                "oPaginate": {
-                    "sFirst":       "Erste",
-                    "sPrevious":    "Zurück",
-                    "sNext":        "Nächste",
-                    "sLast":        "Letzte"
-                },
-                "oAria": {
-                    "sSortAscending":  ": aktivieren, um Spalte aufsteigend zu sortieren",
-                    "sSortDescending": ": aktivieren, um Spalte absteigend zu sortieren"
-                }
-            },
-            ajax: '{!! route('car_data_stock') !!}',
-            columns: [
-                { data: 'id', name: 'id', width: '25px' },
-                { data: 'title', name: 'title' },
-                { data: 'chassis_number', name: 'chassis_number' },
-                { data: 'purchase_date', name: 'purchase_date', render: function(value) {
-                    return date(value)
-                } },
-                { data: 'purchase_price', name: 'purchase_price', render:function(value) {
-                    return currency(value);
-                } },
-                {
-                    data: 'id',
-                    name: 'id',
-                    render: function() {
-                        return '<a href="/car/'+arguments[2]['id']+'" class="btn btn-primary"><i class="fa fa-arrow-right"></i></a>';
-                    },
-                    orderable: false,
-                    searchable: false
-                }
-            ],
-            dom: "<'row'<'col-sm-6'lB><'col-sm-6'f>>" +
-            "<'row'<'col-sm-12'tr>>" +
-            "<'row'<'col-sm-5'i><'col-sm-7'p>>",
-            buttons: [
-                'colvis','copy', 'excel', 'pdf', 'csv'
-            ],
-            initComplete: function () {
-                this.api().columns().every(function () {
-                    var column = this;
-                    if (!$(column.footer()).empty().hasClass('no-search')) {
-                        $('<input class="form-control input-sm" style="width: 100%" />').appendTo($(column.footer()).empty())
-                            .on('change', function () {
-                                var val = $.fn.dataTable.util.escapeRegex($(this).val());
+        {{--$('#car_stock_table').DataTable({--}}
+            {{--processing: true,--}}
+            {{--serverSide: true,--}}
+            {{--//responsive: true,--}}
+            {{--fixedHeader: true,--}}
+            {{--stateSave: true,--}}
+            {{--language: {--}}
+                {{--"sEmptyTable":      "Keine Daten in der Tabelle vorhanden",--}}
+                {{--"sInfo":            "_START_ bis _END_ von _TOTAL_ Einträgen",--}}
+                {{--"sInfoEmpty":       "0 bis 0 von 0 Einträgen",--}}
+                {{--"sInfoFiltered":    "(gefiltert von _MAX_ Einträgen)",--}}
+                {{--"sInfoPostFix":     "",--}}
+                {{--"sInfoThousands":   ".",--}}
+                {{--"sLengthMenu":      "_MENU_ Einträge anzeigen",--}}
+                {{--"sLoadingRecords":  "Wird geladen...",--}}
+                {{--"sProcessing":      "Bitte warten...",--}}
+                {{--"sSearch":          "Suchen",--}}
+                {{--"sZeroRecords":     "Keine Einträge vorhanden.",--}}
+                {{--"oPaginate": {--}}
+                    {{--"sFirst":       "Erste",--}}
+                    {{--"sPrevious":    "Zurück",--}}
+                    {{--"sNext":        "Nächste",--}}
+                    {{--"sLast":        "Letzte"--}}
+                {{--},--}}
+                {{--"oAria": {--}}
+                    {{--"sSortAscending":  ": aktivieren, um Spalte aufsteigend zu sortieren",--}}
+                    {{--"sSortDescending": ": aktivieren, um Spalte absteigend zu sortieren"--}}
+                {{--}--}}
+            {{--},--}}
+            {{--ajax: '{!! route('car_data_stock') !!}',--}}
+            {{--columns: [--}}
+                {{--{ data: 'id', name: 'id', width: '25px' },--}}
+                {{--{ data: 'title', name: 'title' },--}}
+                {{--{ data: 'chassis_number', name: 'chassis_number' },--}}
+                {{--{ data: 'purchase_date', name: 'purchase_date', render: function(value) {--}}
+                    {{--return date(value)--}}
+                {{--} },--}}
+                {{--{ data: 'purchase_price', name: 'purchase_price', render:function(value) {--}}
+                    {{--return currency(value);--}}
+                {{--} },--}}
+                {{--{--}}
+                    {{--data: 'id',--}}
+                    {{--name: 'id',--}}
+                    {{--render: function() {--}}
+                        {{--return '<a href="/car/'+arguments[2]['id']+'" class="btn btn-primary"><i class="fa fa-arrow-right"></i></a>';--}}
+                    {{--},--}}
+                    {{--orderable: false,--}}
+                    {{--searchable: false--}}
+                {{--}--}}
+            {{--],--}}
+            {{--dom: "<'row'<'col-sm-6'lB><'col-sm-6'f>>" +--}}
+            {{--"<'row'<'col-sm-12'tr>>" +--}}
+            {{--"<'row'<'col-sm-5'i><'col-sm-7'p>>",--}}
+            {{--buttons: [--}}
+                {{--'colvis','copy', 'excel', 'pdf', 'csv'--}}
+            {{--],--}}
+            {{--initComplete: function () {--}}
+                {{--this.api().columns().every(function () {--}}
+                    {{--var column = this;--}}
+                    {{--if (!$(column.footer()).empty().hasClass('no-search')) {--}}
+                        {{--$('<input class="form-control input-sm" style="width: 100%" />').appendTo($(column.footer()).empty())--}}
+                            {{--.on('change', function () {--}}
+                                {{--var val = $.fn.dataTable.util.escapeRegex($(this).val());--}}
 
-                                column.search(val ? val : '', true, false).draw();
-                            });
-                    }
-                });
-            }
-        });
+                                {{--column.search(val ? val : '', true, false).draw();--}}
+                            {{--});--}}
+                    {{--}--}}
+                {{--});--}}
+            {{--}--}}
+        {{--});--}}
 
         $('#purchase_date').datepicker({
             language: 'de',
