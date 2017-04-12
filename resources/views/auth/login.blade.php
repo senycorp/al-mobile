@@ -85,7 +85,11 @@
 
     </style>
     <div class="login">
-        <h1><i class="fa fa-legal" style="color:white"></i> LogIn</h1>
+        <h1><span class="fa-stack fa-lg">
+  <i class="fa fa-circle-thin fa-stack-2x"></i>
+  <i class="fa fa-car fa-stack-1x"></i>
+</span> <br/>Al-Automobile</h1>
+        <hr/>
         <form role="form" method="POST" action="{{ route('login') }}">
             {{csrf_field()}}
             <input type="text" name="email" placeholder="Username" required="required" />
