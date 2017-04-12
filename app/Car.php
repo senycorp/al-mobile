@@ -29,7 +29,8 @@ class Car extends Model
         'sale_price',
         'user_id',
         'mobile_id',
-        'tax'
+        'tax',
+        'invoice_data'
     ];
 
     /**
@@ -86,6 +87,7 @@ class Car extends Model
      */
     public function getSaleDate()
     {
+        if (!$this->sale_date) return null;
         return Formatter::date($this->sale_date);
     }
 
@@ -109,7 +111,7 @@ class Car extends Model
         return Formatter::currency($this->purchase_price);
     }
 
-    public function sell($date, $price) {
+    public function sell($date, $price, $account=false) {
         $this->fill([
             'sale_date' => $date,
             'sale_price' => $price,
@@ -119,6 +121,7 @@ class Car extends Model
             'title' => 'Verkaufsbeleg',
             'price' => $this->sale_price,
             'date' => $this->sale_date,
+            'account' => $account,
             'description' => 'Verkaufsbeleg für ' . $this->title . ' mit FG ' . $this->chassis_number,
             'sale_invoice' => 1,
             'user_id' => Auth::user()->id
@@ -136,6 +139,17 @@ class Car extends Model
         return ($this->tax) ? 'Ja' : 'Nein';
     }
 
+    public function unsell() {
+        $this->fill([
+            'sale_date' => null,
+            'sale_price' => null
+        ]);
+
+        $this->save();
+
+        Invoice::where('sale_invoice', 1)->where('car_id', $this->id)->get()[0]->delete();
+    }
+
     /**
      * Get purchase price
      *
@@ -143,6 +157,7 @@ class Car extends Model
      * @return string
      */
     public function getSalePrice() {
+        if (!$this->sale_price) return null;
         return Formatter::currency($this->sale_price);
     }
 
@@ -183,5 +198,21 @@ class Car extends Model
             $this->attributes['purchase_date'] = (new Date($value))->format('Y-m-d');
         else
             $this->attributes['purchase_date'] = $value;
+    }
+
+    public function hasInvoiceData() {
+        return $this->invoice_data;
+    }
+
+    public function isSelled() {
+        return $this->sale_date;
+    }
+
+    public function getSaleInvoice() {
+        return Invoice::where('car_id', '=', $this->id)->where('sale_invoice', '=', '1')->get()[0];
+    }
+
+    public function getPurchaseInvoice() {
+        return Invoice::where('car_id', '=', $this->id)->where('purchase_invoice', '=', '1')->get()[0];
     }
 }

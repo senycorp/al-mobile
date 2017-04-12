@@ -46,3 +46,18 @@ window.axios.defaults.headers.common = {
 //     broadcaster: 'pusher',
 //     key: 'your-pusher-key'
 // });
+
+
+window.date = function(value) {
+    return (new Date(value)).toLocaleDateString('de');
+}
+
+window.currency = function(value) {
+    return accounting.formatMoney(value, "", 2, ".", ",")
+    return (new Number(value)).toLocaleString('de') + ' €'
+}
+
+window.indicatedCurrency = function(value) {
+    cls = (value > 0) ? 'success' : 'danger';
+    return '<span class="label label-'+cls+'">' + currency(value) + ' €</span>';
+}

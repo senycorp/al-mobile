@@ -30,7 +30,9 @@ class CreateInvoicesTable extends Migration
             $table->foreign('invoice_type_id')->references('id')->on('invoice_types')->onDelete('set null');
             $table->boolean('purchase_invoice')->nullable()->default(0);
             $table->boolean('sale_invoice')->nullable()->default(0);
+            $table->boolean('account')->nullable()->default(0);
             $table->date('date');
+            $table->boolean('tax')->default(false);
             $table->timestamps();
 
             $table->index('title');

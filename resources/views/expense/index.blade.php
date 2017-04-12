@@ -53,6 +53,30 @@
                             </div>
                         </div>
 
+                        <div class="form-group{{ $errors->has('tax') ? ' has-error' : '' }}">
+                            <label for="tax" class="col-md-4 control-label">Besteuerung</label>
+                            <div class="checkbox col-md-6">
+                                <label>
+                                    <input type="radio" name="tax" id="p25" checked="checked" value="1"> §25a
+                                </label>
+                                <label>
+                                    <input type="radio" name="tax" id="p19" value="0"> 19% MwSt.
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group{{ $errors->has('account') ? ' has-error' : '' }}">
+                            <label for="tax" class="col-md-4 control-label">Bankkonto</label>
+                            <div class="checkbox col-md-6">
+                                <label>
+                                    <input type="radio" name="account" checked="checked" value="1"> Ja
+                                </label>
+                                <label>
+                                    <input type="radio" name="account" value="0" checked="checked"> Nein
+                                </label>
+                            </div>
+                        </div>
+
                         <div class="form-group{{ $errors->has('date') ? ' has-error' : '' }}">
                             <label for="description" class="col-md-4 control-label">Beschreibung</label>
 
@@ -143,10 +167,16 @@
             },
             ajax: '{!! route('expense_data') !!}',
             columns: [
-                { data: 'id', name: 'id', width: '25px' },
-                { data: 'title', name: 'title' },
-                { data: 'price', name: 'price' },
-                { data: 'date', name: 'date' },
+                { data: 'id', name: 'invoices.id', width: '25px' },
+                { data: 'title', name: 'invoices.title',render: function() {
+                    return (arguments[2]['title']) ? arguments[2]['title'] : arguments[2]['ititle']
+                } },
+                { data: 'price', name: 'price', render: function(value) {
+                    return indicatedCurrency(value);
+                } },
+                { data: 'date', name: 'date' , render: function(value) {
+                    return (new Date(value)).toLocaleDateString('de');
+                }},
                 {
                     data: 'id',
                     name: 'id',
@@ -183,6 +213,38 @@
         $('#date').datepicker({
             language: 'de',
             maxDate: new Date(),
+        });
+
+        $('#title').selectize({
+            persist: false,
+            maxItems: 1,
+            searchField: ['title'],
+            options: {!! collect(DB::select('select id, title, tax from invoice_types'))->toJson() !!},
+            valueField: 'id',
+            labelField: 'title',
+            create: function(input) {
+                return {
+                    id: input,
+                    title: input
+                }
+            },
+            onChange: function(value) {
+                var propertyNames = Object.getOwnPropertyNames(this.options);
+
+                for (var i = 0 ; i < propertyNames.length; i++) {
+                    var option = this.options[propertyNames[i]];
+                    if (option['id'] == value) {
+                        $('#p25, #p19').removeAttr('checked', '')
+                        if (option['tax'] == 1) {
+                            $('#p25').attr('checked', 'checked')
+                        } else {
+                            $('#p19').attr('checked', 'checked')
+                        }
+
+                        return;
+                    }
+                }
+            }
         });
     });
 </script>

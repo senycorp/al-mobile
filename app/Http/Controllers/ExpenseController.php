@@ -39,6 +39,12 @@ class ExpenseController extends Controller
     public function create(Request $request) {
         $data = $request->toArray();
         $data['user_id'] = Auth::user()->id;
+
+        if (is_numeric($data['title'])) {
+            $data['invoice_type_id'] = $data['title'];
+            $data['title'] = null;
+        }
+
         $invoice = Invoice::create($data);
 
         return redirect()->route('expense_detail', ['id' => $invoice->id]);
@@ -49,7 +55,8 @@ class ExpenseController extends Controller
     }
 
     public function getData() {
-        $expenses = DB::table('invoices')->select(['id', 'title', 'price', 'date'])->whereNull('car_id');
+        $expenses = DB::table('invoices')->select(['invoices.id', 'invoices.title as title', 'invoices.price', 'invoices.date', 'invoice_types.title as ititle'])->whereNull('car_id')
+            ->leftJoin('invoice_types', 'invoices.invoice_type_id', '=', 'invoice_types.id');
 
         return Datatables::of($expenses)->make(true);
     }

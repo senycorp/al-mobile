@@ -36,8 +36,12 @@
                                     <td>{{$car->getPurchasePrice()}}</td>
                                 </tr>
                                 <tr>
-                                    <td>§25a</td>
-                                    <td>{{($car->tax ? 'Ja' : 'Nein')}}</td>
+                                    <td>Einkaufsbeleg</td>
+                                    <td><a href="{{route('expense_detail' , ['id' => $car->getPurchaseInvoice()->id])}}">Einkaufsbeleg öffnen</a></td>
+                                </tr>
+                                <tr>
+                                    <td>Besteuerung</td>
+                                    <td>{{($car->getTaxIdentifier())}}</td>
                                 </tr>
                                 @if ($car->sale_date)
                                     <tr>
@@ -47,6 +51,14 @@
                                     <tr>
                                         <td>Verkaufspreis</td>
                                         <td>{{$car->getSalePrice()}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Verkaufsbeleg</td>
+                                        <td><a href="{{route('expense_detail' , ['id' => $car->getSaleInvoice()->id])}}">Verkaufsbeleg öffnen</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Verkauft nach</td>
+                                        <td>{{\App\Formatter::dateDifference($car->purchase_date, $car->sale_date)}}</td>
                                     </tr>
                                 @endif
                                 </tbody>
@@ -116,11 +128,11 @@
                                 </tr>
                                 <tr>
                                     <td>Erstellt am</td>
-                                    <td>{{$car->created_at}}</td>
+                                    <td>{{\App\Formatter::date($car->created_at)}}</td>
                                 </tr>
                                 <tr>
                                     <td>Aktualisiert am</td>
-                                    <td>{{$car->updated_at}}</td>
+                                    <td>{{\App\Formatter::date($car->updated_at)}}</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -144,6 +156,9 @@
                             @endif
                             @if ($car->mobile_id)
                                 <a href="http://suchen.mobile.de/fahrzeuge/details.html?id={{$car->mobile_id}}" class="btn btn-block btn-primary"><i class="fa fa-legal"></i> Mobile.de</a>
+                            @endif
+                            @if ($car->isSelled())
+                                <a href="{{route('car_invoice', ['id' => $car->id])}}" class="btn btn-block btn-primary"><i class="fa fa-file-text-o"></i> Rechnung erstellen</a>
                             @endif
                         </div>
                     </div>
@@ -205,6 +220,30 @@
                                     </div>
                                 </div>
 
+                                <div class="form-group{{ $errors->has('invoice_tax') ? ' has-error' : '' }}">
+                                    <label for="invoice_tax" class="col-md-4 control-label">Besteuerung</label>
+                                    <div class="checkbox col-md-6">
+                                        <label>
+                                            <input type="radio" id="p25" name="invoice_tax" checked="checked" value="1"> §25a
+                                        </label>
+                                        <label>
+                                            <input type="radio" id="p19" name="invoice_tax" value="0"> 19% MwSt.
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group{{ $errors->has('invoice_account') ? ' has-error' : '' }}">
+                                    <label for="tax" class="col-md-4 control-label">Bankkonto</label>
+                                    <div class="checkbox col-md-6">
+                                        <label>
+                                            <input type="radio" name="invoice_account" checked="checked" value="1"> Ja
+                                        </label>
+                                        <label>
+                                            <input type="radio" name="invoice_account" value="0" checked="checked"> Nein
+                                        </label>
+                                    </div>
+                                </div>
+
                                 <div class="form-group{{ $errors->has('invoice_description') ? ' has-error' : '' }}">
                                     <label for="invoice_description" class="col-md-4 control-label">Beschreibung</label>
 
@@ -231,7 +270,7 @@
                     </div>
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            Aufwände
+                            Rechnungen
                         </div>
 
                         <div class="panel-body">
@@ -299,6 +338,18 @@
                                             @endif
                                         </div>
                                     </div>
+
+                                    <div class="form-group{{ $errors->has('account') ? ' has-error' : '' }}">
+                                        <label for="tax" class="col-md-4 control-label">Bankkonto</label>
+                                        <div class="checkbox col-md-6">
+                                            <label>
+                                                <input type="radio" name="account" checked="checked" value="1"> Ja
+                                            </label>
+                                            <label>
+                                                <input type="radio" name="account" value="0" checked="checked"> Nein
+                                            </label>
+                                        </div>
+                                    </div>
                                     <div class="form-group">
                                         <div class="col-md-6 col-md-offset-4">
                                             <button type="submit" class="btn btn-primary btn-block">
@@ -351,10 +402,16 @@
             },
             ajax: '{!! route('car_invoice_data', ['id' => $car->id]) !!}',
             columns: [
-                { data: 'id', name: 'id', width: '25px' },
-                { data: 'title', name: 'title' },
-                { data: 'price', name: 'price' },
-                { data: 'date', name: 'date' },
+                { data: 'id', name: 'invoices.id', width: '25px' },
+                { data: 'title', name: 'title', render: function() {
+                    return (arguments[2]['title']) ? arguments[2]['title'] : arguments[2]['ititle']
+                }},
+                { data: 'price', name: 'price', render: function(value) {
+                    return indicatedCurrency(value)
+                } },
+                { data: 'date', name: 'date', render: function(value) {
+                    return date(value);
+                } },
                 {
                     data: 'id',
                     name: 'id',
@@ -391,13 +448,45 @@
         $('#invoice_date').datepicker({
             language: 'de',
             minDate: new Date('{{$car->purchase_date}}'),
-            maxDate: @if ($car->sale_date) new Date('{{$car->sale_date}}') @else new Date() @endif,
+            //maxDate: @if ($car->sale_date) new Date('{{$car->sale_date}}') @else new Date() @endif,
         });
 
         $('#sale_date').datepicker({
             language: 'de',
             minDate: new Date('{{$car->purchase_date}}'),
             maxDate: new Date(),
+        });
+
+        $('#invoice_title').selectize({
+            persist: false,
+            maxItems: 1,
+            searchField: ['title'],
+            options: {!! collect(DB::select('select id, title, tax from invoice_types'))->toJson() !!},
+            valueField: 'id',
+            labelField: 'title',
+            create: function(input) {
+                return {
+                    id: input,
+                    title: input
+                }
+            },
+            onChange: function(value) {
+                var propertyNames = Object.getOwnPropertyNames(this.options);
+
+                for (var i = 0 ; i < propertyNames.length; i++) {
+                    var option = this.options[propertyNames[i]];
+                    if (option['id'] == value) {
+                        $('#p25, #p19').removeAttr('checked', '')
+                        if (option['tax'] == 1) {
+                            $('#p25').attr('checked', 'checked')
+                        } else {
+                            $('#p19').attr('checked', 'checked')
+                        }
+
+                        return;
+                    }
+                }
+            }
         });
 
         @if ($car->mobile_id)

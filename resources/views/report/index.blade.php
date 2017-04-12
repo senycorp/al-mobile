@@ -19,6 +19,16 @@
                             <input type="text" class="form-control" id="to_date" name="to_date" readonly required>
                         </div>
                         <button type="submit" class="btn btn-primary">Report erstellen</button>
+                        <div class="form-group">
+                            <label for="quarter"></label>
+                            <select class="form-control" id="quarter" name="quarter">
+                                <option value=""></option>
+                                <option value="{{date('Y')}}-01-01;{{date('Y')}}-03-31">1. Quartal</option>
+                                <option value="{{date('Y')}}-04-01;{{date('Y')}}-06-30">2. Quartal</option>
+                                <option value="{{date('Y')}}-07-01;{{date('Y')}}-09-30">3. Quartal</option>
+                                <option value="{{date('Y')}}-10-01;{{date('Y')}}-12-31">4. Quartal</option>
+                            </select>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -66,27 +76,36 @@
                         <tr>
                             <th>ID</th>
                             <th>Bezeichnung</th>
-                            <th>Chassis</th>
+                            <th>Fahrgestellnummer</th>
                             <th>EK-Datum</th>
                             <th>EK-Preis</th>
                             <th>VK-Datum</th>
                             <th>VK-Preis</th>
+                            <th>Gewinn</th>
+                            <th>Mehrwertsteuer</th>
                         </tr>
                         </thead>
                         <tbody>
                         @php
                             $ids = [];
-                        
+
                             foreach($data['expenses'] as $expense) {
                                 if ($expense->car_id && !in_array($expense->car_id, $ids)) {
                                     echo '<tr>
                                 <td>'.$expense->car->id.'</td>
                                 <td>'.$expense->car->title.'</td>
                                 <td>'.$expense->car->chassis_number.'</td>
-                                <td>'.$expense->car->purchase_date.'</td>
-                                <td>'.$expense->car->purchase_price.'</td>
-                                <td>'.$expense->car->sale_date.'</td>
-                                <td>'.$expense->car->sale_price.'</td>
+                                <td>'.$expense->car->getPurchaseDate().'</td>
+                                <td>'.$expense->car->getPurchasePrice().'</td>
+                                <td>'.$expense->car->getSaleDate().'</td>
+                                <td>'.$expense->car->getSalePrice().'</td>
+                                <td>'.(($expense->car->sale_date) ? \App\Formatter::indicatedCurrency($expense->car->sale_price - $expense->car->purchase_price) : null).'</td>
+                                <td>'.(
+                                        ($expense->car->sale_date && ($expense->car->sale_price - $expense->car->purchase_price) > 0) ?
+                                            ($expense->car->tax) ?
+                                                \App\Formatter::indicatedCurrency($expense->car->sale_price - $expense->car->purchase_price - (($expense->car->sale_price - $expense->car->purchase_price)/1.19)) :
+                                                \App\Formatter::indicatedCurrency($expense->car->sale_price - (($expense->car->sale_price)/1.19))
+                                            : null).'</td>
                             </tr>';
                                 }
 
@@ -121,9 +140,10 @@
                                     <td>###</td>
                                     <td>###</td>
                                     <td>Kassenstand: Übertrag</td>
-                                    <td>{{\App\Formatter::currency($data['cashBefore'])}}</td>
+                                    <td>{!! \App\Formatter::indicatedCurrency($data['cashBefore']) !!}</td>
+                                    <td></td>
                                     <td>bis aussschließlich {{request('from_date')}}</td>
-                                    <td>{{\App\Formatter::currency($data['cashBefore'])}}</td>
+                                    <td>{!! \App\Formatter::indicatedCurrency($data['cashBefore']) !!}</td>
                                 </tr>
                             @php
                                 if (count($data['expenses'])) {
@@ -134,13 +154,15 @@
                                                     '<td>'.sprintf('%04d', $counter++).'</td>' .
                                                     '<td><a href="'.route('expense_detail', ['id' => $expense->id]).'" target="_blank">'.$expense->id.'</a></td>' .
                                                     '<td>'.(($expense->car_id) ? $expense->car->chassis_number : null).'</td>' .
-                                                    '<td>'.$expense->title.'</td>' .
-                                                    '<td>'.$expense->getPrice() . '</td>' .
-                                                    '<td>'.($expense->sale_invoice || $expense->purchase_invoice ?  $expense->car->getTaxIdentifier()  : '').'</td>'.
+                                                    '<td>'.$expense->getTitle(). (($expense->account) ? '<br/> (Buchung vom Bankkonto)' : null).'</td>' .
+                                                    '<td>'.$expense->getIndicatedPrice() . '</td>' .
+                                                    '<td>'.($expense->sale_invoice || $expense->purchase_invoice ?  $expense->car->getTaxIdentifier()  : $expense->getTaxIdentifier()).'</td>'.
                                                     '<td>'.$expense->getDate().'</td>' .
-                                                    '<td>'.(\App\Formatter::currency($cashBefore + ($expense->price))).'</td>' .
+                                                    '<td>'.(\App\Formatter::indicatedCurrency((($expense->account) ? $cashBefore : $cashBefore + ($expense->price)))).'</td>' .
                                                 '</tr>';
-                                            $cashBefore = $cashBefore + ($expense->price);
+
+                                            if (!$expense->account)
+                                                $cashBefore = $cashBefore + ($expense->price);
                                     }
                                 } else {
                                     echo '<tr class="info"><td colspan="5">Keine Daten verfügbar</td></tr>';
@@ -149,7 +171,7 @@
                             </tbody>
                         </table>
                         <div class="panel-body" style="text-align:right">
-                            <span class="badge">Summe: {{\App\Formatter::currency($cashBefore)}}</span>
+                            <span class="badge">Kassenstand: {{\App\Formatter::currency($cashBefore)}}</span>
                         </div>
                     </div>
             </div>
@@ -172,6 +194,23 @@
         $('#to_date').datepicker({
             language: 'de'
         });
+
+        $('#quarter').change(function() {
+            var value = $(this).val();
+
+            if (value) {
+                var dates = value.split(';');
+
+                $('#from_date').datepicker().data('datepicker').selectDate(new Date(dates[0]));
+                $('#to_date').datepicker().data('datepicker').selectDate(new Date(dates[1]));
+            } else {
+                $('#from_date').datepicker().data('datepicker').selectDate(new Date());
+                $('#to_date').datepicker().data('datepicker').selectDate(new Date());
+            }
+
+        });
+
+        $('#quarter').trigger('change');
     });
 </script>
 @endpush

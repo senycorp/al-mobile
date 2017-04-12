@@ -94,6 +94,18 @@
                             </div>
                         </div>
 
+                        <div class="form-group{{ $errors->has('tax') ? ' has-error' : '' }}">
+                            <label for="tax" class="col-md-4 control-label">Besteuerung</label>
+                            <div class="checkbox col-md-6">
+                                <label>
+                                    <input type="radio" name="tax" checked="checked" value="1"> §25a
+                                </label>
+                                <label>
+                                    <input type="radio" name="tax" value="0"> 19% MwSt.
+                                </label>
+                            </div>
+                        </div>
+
                         <div class="form-group">
                             <div class="col-md-6 col-md-offset-4">
                                 <button type="submit" class="btn btn-primary btn-block">

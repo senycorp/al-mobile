@@ -17,6 +17,7 @@ class InvoiceType extends Model
      */
     protected $fillable = [
         'title',
+        'tax'
     ];
 
     /**

@@ -7,7 +7,7 @@
                 <div class="col-md-6">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <span class="badge label-primary">#{{$expense->id}}</span> {{$expense->title}}
+                            <span class="badge label-primary">#{{$expense->id}}</span> {{$expense->getTitle()}}
                         </div>
 
                         <div class="table-responsive">
@@ -15,7 +15,7 @@
                                 <tbody>
                                     <tr>
                                         <td>Bezeichnung</td>
-                                        <td>{{$expense->title}}</td>
+                                        <td>{{$expense->getTitle()}}</td>
                                     </tr>
                                     <tr>
                                         <td>Betrag</td>
@@ -24,6 +24,14 @@
                                     <tr>
                                         <td>Datum</td>
                                         <td>{{$expense->getDate()}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>§25a</td>
+                                        <td>{{($expense->is25())}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Bankkonto</td>
+                                        <td>{{($expense->isAccount())}}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -53,11 +61,11 @@
                                 </tr>
                                 <tr>
                                     <td>Erstellt am</td>
-                                    <td>{{$expense->created_at}}</td>
+                                    <td>{{\App\Formatter::date($expense->created_at)}}</td>
                                 </tr>
                                 <tr>
                                     <td>Aktualisiert am</td>
-                                    <td>{{$expense->updated_at}}</td>
+                                    <td>{{\App\Formatter::date($expense->updated_at)}}</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -76,7 +84,10 @@
                             @if($expense->car_id)
                             <a class="btn btn-block btn-primary" href="{{route('car_detail', ['id' => $expense->car_id])}}"><i class="fa fa-car"></i> Zum Auto</a>
                             @endif
+
+                            @if (!$expense->purchase_invoice)
                             <a class="btn btn-block btn-danger" href="{{route('expense_delete', ['id' => $expense->id])}}"><i class="fa fa-trash"></i> Rechnung löschen</a>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -172,6 +183,38 @@
             language: 'de',
             @if ($expense->car && $expense->car->purchase_date) minDate:  new Date('{{$expense->car->purchase_date}}'), @endif
             @if ($expense->car && $expense->car->sale_date) maxDate: new Date('{{$expense->car->sale_date}}') @else maxDate: new Date() @endif
+        });
+
+        $('#title').selectize({
+            persist: false,
+            maxItems: 1,
+            searchField: ['title'],
+            options: {!! collect(DB::select('select id, title, tax from invoice_types'))->toJson() !!},
+            valueField: 'id',
+            labelField: 'title',
+            create: function(input) {
+                return {
+                    id: input,
+                    title: input
+                }
+            },
+            onChange: function(value) {
+                var propertyNames = Object.getOwnPropertyNames(this.options);
+
+                for (var i = 0 ; i < propertyNames.length; i++) {
+                    var option = this.options[propertyNames[i]];
+                    if (option['id'] == value) {
+                        $('#p25, #p19').removeAttr('checked', '')
+                        if (option['tax'] == 1) {
+                            $('#p25').attr('checked', 'checked')
+                        } else {
+                            $('#p19').attr('checked', 'checked')
+                        }
+
+                        return;
+                    }
+                }
+            }
         });
     });
 </script>

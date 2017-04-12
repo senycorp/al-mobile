@@ -67,9 +67,11 @@ class CarController extends Controller
             'title' => 'Einkaufsbeleg',
             'price' => -$car->purchase_price,
             'date' => $car->purchase_date,
+            'account' => $data['account'],
             'description' => 'Einkaufsbeleg für ' . $car->title . ' mit FG ' . $car->chassis_number,
             'purchase_invoice' => 1,
-            'user_id' => Auth::user()->id
+            'user_id' => Auth::user()->id,
+            'tax' => $car->tax
         ]);
 
         return redirect('/car/' . $car->id);
@@ -89,7 +91,7 @@ class CarController extends Controller
             'sale_price' => 'required'
         ]);
 
-        Car::findOrFail($id)->sell($request['sale_date'], $request['sale_price']);
+        Car::findOrFail($id)->sell($request['sale_date'], $request['sale_price'], $request['account']);
 
         return redirect()->back();
     }
@@ -100,15 +102,26 @@ class CarController extends Controller
         $this->validate($request, [
             'invoice_title' => 'required',
             'invoice_price' => 'required|numeric',
-            'invoice_date'  => 'required|date|before_or_equal:purchase_date',
-            'invoice_description' => 'nullable'
+            'invoice_date'  => 'required|date|after_or_equal:purchase_date',
+            'invoice_description' => 'nullable',
+            'invoice_tax' => 'required'
         ]);
 
+        $data = $request->toArray();
+        $data['invoice_type_id'] = null;
+        if (is_numeric($data['invoice_title'])) {
+            $data['invoice_type_id'] = $data['invoice_title'];
+            $data['invoice_title'] = null;
+        }
+
         Car::find($id)->invoices()->create([
-            'title' => $request->get('invoice_title'),
-            'price' => $request->get('invoice_price'),
-            'date' => $request->get('invoice_date'),
-            'user_id' => Auth::user()->id
+            'title' => $data['invoice_title'],
+            'invoice_type_id' => $data['invoice_type_id'],
+            'price' => $data['invoice_price'],
+            'date' => $data['invoice_date'],
+            'user_id' => Auth::user()->id,
+            'tax' => $data['invoice_tax'],
+            'account' => $data['invoice_account']
         ]);
 
         return redirect('/car/' . $id);
@@ -141,7 +154,9 @@ class CarController extends Controller
     public function getData(Request $request) {
         $cars = DB::table('cars')->select(['id', 'title', 'chassis_number', 'purchase_date', 'purchase_price', 'sale_date', 'sale_price']);
 
-        return Datatables::of($cars)->make(true);
+        return Datatables::of($cars)->setRowClass(function ($car) {
+            return ($car->sale_date) ? 'danger' : 'success';
+        })->make(true);
     }
 
     public function getDataStock(Request $request) {
@@ -151,8 +166,8 @@ class CarController extends Controller
     }
 
     public function getInvoiceData(Request $request, $id) {
-        $cars = DB::table('invoices')->select(['id', 'title', 'price', 'date'])->where('car_id', '=', $id);
-
+        $cars = DB::table('invoices')->select(['invoices.id as id', 'invoices.title as title', 'invoices.price', 'invoices.date', 'invoice_types.title as ititle'])->where('car_id', '=', $id)
+            ->leftJoin('invoice_types', 'invoices.invoice_type_id', '=', 'invoice_types.id');
         return Datatables::of($cars)->make(true);
     }
 }

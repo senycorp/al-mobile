@@ -22,7 +22,12 @@ Route::get('/report', 'ReportController@index')->name('report');
 Route::post('/report', 'ReportController@create')->name('report_create');
 Route::get('/expense/data', 'ExpenseController@getData')->name('expense_data');
 Route::get('/expense/{id}/delete', function($id) {
-    \App\Invoice::destroy([$id]);
+    $invoice = \App\Invoice::findOrFail($id);
+
+    if ($invoice->sale_invoice) {
+        $invoice->car->unsell();
+    } else if (!$invoice->purchase_invoice)
+        \App\Invoice::destroy([$id]);
 
     return redirect()->route('expense_index');
 })->name('expense_delete');
@@ -67,16 +72,65 @@ Route::post('/car/{id}/sell', 'CarController@sellCar')->name('car_sell');
 Route::post('/car/{id}/invoice', 'CarController@createInvoice')->name('car_create_invoice');
 Route::post('/car', 'CarController@create')->name('car_create');
 Route::get('/car/{id}/unsell', function($id) {
-    \App\Car::find($id)->fill([
-        'sale_date' => null,
-        'sale_price' => null
-    ])->save();
+    \App\Car::find($id)->unsell();
 
     return redirect()->back();
 })->name('car_unsell');
 
 Route::get('/invoice/{id}/delete', function($id) {
-    \App\Invoice::destroy([$id]);
+    $invoice = \App\Invoice::findOrFail($id);
+
+    if ($invoice->sale_invoice) {
+        $invoice->car->unsell();
+    } else if (!$invoice->purchase_invoice)
+        \App\Invoice::destroy([$id]);
 
     return redirect()->back();
 })->name('delete_invoice');
+
+Route::get('/car/{id}/invoicep', function($id) {
+    $car = \App\Car::find($id);
+
+    $invoiceData = [];
+    if ($car->hasInvoiceData()) {
+        $invoiceData = json_decode($car->invoice_data, true);
+        $invoiceData['car_id'] = $car->id;
+        $invoiceData['tax'] = $car->tax;
+        $invoiceData['date'] = \App\Formatter::date($car->sale_date);
+        $invoiceData['price'] = $car->sale_price;
+        $invoiceData['invoice_no'] = $car->getSaleInvoice()->id;
+    } else {
+        $invoiceData = [
+            'car_id' => $car->id,
+            'title' =>   $car->title,
+            'pos_title' =>   $car->title,
+            'description' => '',
+            'date' => $car->getSaleDate(),
+            'invoice_no' => $car->getSaleInvoice()->id,
+            'chassis_number' => $car->chassis_number,
+            'km' => null,
+            'first_registration' => null,
+            'color' => null,
+            'price' => $car->sale_price,
+            'tax' => $car->tax,
+            'service_provision_date' => null,
+            'buyer' => [
+                'name' => null,
+                'street' => null,
+                'location' => null,
+                'country' => 'Deutschland'
+            ],
+        ];
+
+    }
+
+    return view('car.invoice', ['data' => $invoiceData]);
+})->name('car_invoice');
+
+Route::post('/car/{id}/invoicep', function($id) {
+    $car = \App\Car::find($id);
+    $car->fill([
+        'invoice_data' => json_encode(request()->toArray())])->save();
+
+    return response('', 200);
+})->name('car_save_invoice');

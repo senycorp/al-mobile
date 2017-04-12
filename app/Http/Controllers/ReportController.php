@@ -47,7 +47,7 @@ class ReportController extends Controller
             $query->whereBetween('date', [$fromDate, $toDate]);
         })->orderBy('date')->get();
 
-        $cashBefore = DB::select('SELECT sum(price) AS cashBefore FROM invoices WHERE date < \'' . $fromDate . '\';')[0]->cashBefore;
+        $cashBefore = DB::select('SELECT sum(price) AS cashBefore FROM invoices WHERE date < \'' . $fromDate . '\' AND account = 0;')[0]->cashBefore;
 
         return view('report.index', ['data' => [
             'cashBefore' => $cashBefore,

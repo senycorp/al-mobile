@@ -19,9 +19,11 @@ class CreateInvoiceTypesTable extends Migration
         Schema::create('invoice_types', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title');
+            $table->boolean('tax')->default(false);
             $table->timestamps();
 
             $table->index(['title']);
+            $table->index(['tax']);
         });
     }
 

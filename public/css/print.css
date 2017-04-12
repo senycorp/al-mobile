@@ -1,3 +1,35 @@
-#report_panel,#export_panel, #print_panel{
+#report_panel, #export_panel, #print_panel {
     display:none;
+}
+
+input, textarea {
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    margin: -10px !important;
+    padding: -10px !important;
+}
+
+textarea {
+    font-size: 10px !important;
+    color: grey !important;
+}
+
+@page {
+    size: A4;
+    margin: 11mm 17mm 17mm 17mm;
+}
+
+.print-hidden {
+    display:none;
+}
+
+.print-footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%
+}
+
+html, body {
+    height: 297mm;
 }

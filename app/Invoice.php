@@ -27,7 +27,17 @@ class Invoice extends Model
         'user_id',
         'purchase_invoice',
         'sale_invoice',
+        'tax',
+        'account'
     ];
+
+    public function isAssigned() {
+        return $this->car_id;
+    }
+
+    public function isAccount() {
+        return ($this->account) ? 'Ja' : 'Nein';
+    }
 
     /**
      * Get assigned car
@@ -39,6 +49,10 @@ class Invoice extends Model
         return $this->belongsTo('App\Car');
     }
 
+    public function getIndicatedPrice() {
+        return Formatter::indicatedCurrency($this->price);
+    }
+
     /**
      * Get invoice type
      *
@@ -46,7 +60,7 @@ class Invoice extends Model
      */
     public function type()
     {
-        return $this->belongsTo('App\InvoiceType');
+        return $this->belongsTo('App\InvoiceType', 'invoice_type_id', 'id');
     }
 
     /**
@@ -70,6 +84,12 @@ class Invoice extends Model
         return false;
     }
 
+    public function getTitle() {
+        if ($this->invoice_type_id) return $this->type->title;
+
+        return $this->title;
+    }
+
     public function getDate() {
         return Formatter::date($this->date);
     }
@@ -83,5 +103,16 @@ class Invoice extends Model
             $this->attributes['date'] = (new Date($value))->format('Y-m-d');
         else
             $this->attributes['date'] = $value;
+    }
+
+    public function getTaxIdentifier() {
+        if ($this->tax)
+            return '§25a';
+
+        return '19%';
+    }
+
+    public function is25(){
+        return ($this->tax) ? 'Ja' : 'Nein';
     }
 }
