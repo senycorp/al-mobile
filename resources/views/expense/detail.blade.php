@@ -89,7 +89,7 @@
 
                             @if ($expense->price > 0)
                                 @if ($expense->sale_invoice)
-                                        <a class="btn btn-block btn-primary" href="{{route('car_invoice', ['id' => $expense->car_id])}}"><i class="fa fa-file-text-o"></i> Rechnung erstellen</a>
+                                    <a class="btn btn-block btn-primary" href="{{route('car_invoice', ['id' => $expense->car_id])}}"><i class="fa fa-file-text-o"></i> Rechnung erstellen</a>
                                 @else
                                     <a class="btn btn-block btn-primary" href="{{route('expense_invoice', ['id' => $expense->id])}}"><i class="fa fa-file-text-o"></i> Rechnung erstellen</a>
                                 @endif

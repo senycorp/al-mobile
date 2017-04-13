@@ -11,16 +11,40 @@
 |
 */
 
+use App\Invoice;
 use Goutte\Client;
+use Illuminate\Support\Facades\Auth;
 
-Route::get('/', 'HomeController@index')->name('dashboard');
+Route::get('/', 'HomeController@index')->name('dashboard')->middleware('auth');;
 
 Auth::routes();
 
+Route::get('/expense/mass', function() {
+    return view('expense.mass');
+})->name('expense_mass')->middleware('auth');;
+Route::post('/expense/mass', function() {
+    $data = json_decode(request()->get('data'),true);
+    $invoices = [];
+    if (count($data)) {
+        foreach ($data as $eData) {
+            $eData['user_id'] = Auth::user()->id;
+
+            if (is_numeric($eData['title'])) {
+                $eData['invoice_type_id'] = $eData['title'];
+                $eData['title'] = null;
+            }
+
+            $invoices[] = Invoice::create($eData);
+        }
+    }
+
+    return view('expense.mass', ['data' => $invoices]);
+})->name('expense_mass_create')->middleware('auth');;
+
 Route::get('/home', 'HomeController@index');
-Route::get('/report', 'ReportController@index')->name('report');
-Route::post('/report', 'ReportController@create')->name('report_create');
-Route::get('/expense/data', 'ExpenseController@getData')->name('expense_data');
+Route::get('/report', 'ReportController@index')->name('report')->middleware('auth');;
+Route::post('/report', 'ReportController@create')->name('report_create')->middleware('auth');;
+Route::get('/expense/data', 'ExpenseController@getData')->name('expense_data')->middleware('auth');;
 Route::get('/expense/{id}/delete', function($id) {
     $invoice = \App\Invoice::findOrFail($id);
 
@@ -30,17 +54,17 @@ Route::get('/expense/{id}/delete', function($id) {
         \App\Invoice::destroy([$id]);
 
     return redirect()->route('expense_index');
-})->name('expense_delete');
+})->name('expense_delete')->middleware('auth');;
 Route::post('/expense/{id}/update', function($id) {
     \App\Invoice::find($id)->fill(request()->toArray())->save();
 
     return redirect()->back();
-})->name('expense_update');
-Route::get('/expense/{id}', 'ExpenseController@detail')->name('expense_detail');
-Route::get('/expense', 'ExpenseController@index')->name('expense_index');
-Route::post('/expense', 'ExpenseController@create')->name('expense_create');
-Route::get('/car/data', 'CarController@getData')->name('car_data');
-Route::get('/car/datastock', 'CarController@getDataStock')->name('car_data_stock');
+})->name('expense_update')->middleware('auth');;
+Route::get('/expense/{id}', 'ExpenseController@detail')->name('expense_detail')->middleware('auth');;
+Route::get('/expense', 'ExpenseController@index')->name('expense_index')->middleware('auth');;
+Route::post('/expense', 'ExpenseController@create')->name('expense_create')->middleware('auth');;
+Route::get('/car/data', 'CarController@getData')->name('car_data')->middleware('auth');;
+Route::get('/car/datastock', 'CarController@getDataStock')->name('car_data_stock')->middleware('auth');;
 Route::get('/mobile/{id}', function($id) {
     try {
         $client = new Client();
@@ -56,26 +80,26 @@ Route::get('/mobile/{id}', function($id) {
     } catch (Exception $e) {
         return response()->setStatusCode(500)->json(['error' => 'No Data available']);
     }
-})->name('mobile_data');
-Route::get('/car/{id}/auctionData', 'CarController@getAuctionData')->name('car_auction_data');
-Route::get('/car/{id}/invoiceData', 'CarController@getInvoiceData')->name('car_invoice_data');
+})->name('mobile_data')->middleware('auth');;
+Route::get('/car/{id}/auctionData', 'CarController@getAuctionData')->name('car_auction_data')->middleware('auth');;
+Route::get('/car/{id}/invoiceData', 'CarController@getInvoiceData')->name('car_invoice_data')->middleware('auth');;
 Route::get('/car/{id}/delete', function($id) {
     \App\Car::destroy([$id]);
 
     return redirect()->route('car_index');
-})->name('car_delete');
-Route::get('/carStock', 'CarController@indexStock')->name('car_index_stock');
-Route::get('/car/{id}', 'CarController@detail')->name('car_detail');
-Route::get('/car', 'CarController@index')->name('car_index');
+})->name('car_delete')->middleware('auth');;
+Route::get('/carStock', 'CarController@indexStock')->name('car_index_stock')->middleware('auth');;
+Route::get('/car/{id}', 'CarController@detail')->name('car_detail')->middleware('auth');;
+Route::get('/car', 'CarController@index')->name('car_index')->middleware('auth');;
 
-Route::post('/car/{id}/sell', 'CarController@sellCar')->name('car_sell');
-Route::post('/car/{id}/invoice', 'CarController@createInvoice')->name('car_create_invoice');
-Route::post('/car', 'CarController@create')->name('car_create');
+Route::post('/car/{id}/sell', 'CarController@sellCar')->name('car_sell')->middleware('auth');;
+Route::post('/car/{id}/invoice', 'CarController@createInvoice')->name('car_create_invoice')->middleware('auth');;
+Route::post('/car', 'CarController@create')->name('car_create')->middleware('auth');;
 Route::get('/car/{id}/unsell', function($id) {
     \App\Car::find($id)->unsell();
 
     return redirect()->back();
-})->name('car_unsell');
+})->name('car_unsell')->middleware('auth');;
 
 Route::get('/invoice/{id}/delete', function($id) {
     $invoice = \App\Invoice::findOrFail($id);
@@ -86,7 +110,7 @@ Route::get('/invoice/{id}/delete', function($id) {
         \App\Invoice::destroy([$id]);
 
     return redirect()->back();
-})->name('delete_invoice');
+})->name('delete_invoice')->middleware('auth');;
 
 Route::get('/car/{id}/invoicep', function($id) {
     $car = \App\Car::find($id);
@@ -125,7 +149,7 @@ Route::get('/car/{id}/invoicep', function($id) {
     }
 
     return view('car.invoice', ['data' => $invoiceData]);
-})->name('car_invoice');
+})->name('car_invoice')->middleware('auth');;
 
 Route::post('/car/{id}/invoicep', function($id) {
     $car = \App\Car::find($id);
@@ -133,7 +157,7 @@ Route::post('/car/{id}/invoicep', function($id) {
         'invoice_data' => json_encode(request()->toArray())])->save();
 
     return response('', 200);
-})->name('car_save_invoice');
+})->name('car_save_invoice')->middleware('auth');;
 
 Route::get('/expense/{id}/invoicep', function($id) {
     $invoice = \App\Invoice::find($id);
@@ -164,7 +188,7 @@ Route::get('/expense/{id}/invoicep', function($id) {
     return view('expense.invoice', [
         'data' => $data
     ]);
-})->name('expense_invoice');
+})->name('expense_invoice')->middleware('auth');;
 
 Route::post('/expense/{id}/invoicep', function($id) {
     $invoice = \App\Invoice::find($id);
@@ -174,4 +198,4 @@ Route::post('/expense/{id}/invoicep', function($id) {
     ])->save();
 
     return response('', 200);
-})->name('expense_save_invoice');
+})->name('expense_save_invoice')->middleware('auth');;
