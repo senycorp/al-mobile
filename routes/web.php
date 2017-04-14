@@ -27,6 +27,7 @@ Route::post('/expense/mass', function() {
     $invoices = [];
     if (count($data)) {
         foreach ($data as $eData) {
+            if ($eData['car']) $eData['car_id'] = $eData['car'];
             $eData['user_id'] = Auth::user()->id;
 
             if (is_numeric($eData['title'])) {

@@ -12,7 +12,7 @@
                 @if (count($data))
                     <ul>
                         @foreach($data as $invoice)
-                            <li><a href="{{route('expense_detail', ['id' => $invoice->id])}}">{{$invoice->getTitle()}}</a></li>
+                            <li><a href="{{route('expense_detail', ['id' => $invoice->id])}}" target="_blank">{{$invoice->getTitle()}}</a></li>
                         @endforeach
                     </ul>
                 @endif
@@ -41,6 +41,24 @@
                             </div>
                         </div>
 
+                        <div class="form-group{{ $errors->has('title') ? ' has-error' : '' }}">
+                            <label for="car" class="col-md-4 control-label">Auto</label>
+
+                            <div class="col-md-6">
+                                <select id="car" class="form-control" name="car">
+                                    <option value=""><i>-</i></option>
+                                    @foreach (\App\Car::all() as $car)
+                                        <option value="{{$car->id}}">{{$car->title}} [{{$car->chassis_number}}]</option>
+                                    @endforeach
+                                </select>
+                                @if ($errors->has('car'))
+                                    <span class="help-block">
+                                        <strong>{{ $errors->first('car') }}</strong>
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+
                         <div class="form-group{{ $errors->has('price') ? ' has-error' : '' }}">
                             <label for="price" class="col-md-4 control-label">Betrag</label>
 
@@ -59,7 +77,7 @@
                             <label for="date" class="col-md-4 control-label">Datum</label>
 
                             <div class="col-md-6">
-                                <input id="date" type="text" class="form-control" name="date" value="{{ old('date') }}" readonly required autofocus>
+                                <input id="date" type="text" class="form-control" name="date" value="{{ old('date') }}" onchange="$(this).val('')" required autofocus>
 
                                 @if ($errors->has('date'))
                                     <span class="help-block">
@@ -128,6 +146,7 @@
                             <tr>
                                 <th>Bezeichnung</th>
                                 <th>Betrag</th>
+                                <th>Auto</th>
                                 <th>Datum</th>
                                 <th>Besteuerung</th>
                                 <th>Bankkonto</th>
@@ -136,6 +155,7 @@
                             </tr>
                             </thead>
                             <tfoot>
+                                <td class="no-search"></td>
                                 <td class="no-search"></td>
                                 <td class="no-search"></td>
                                 <td class="no-search"></td>
@@ -154,6 +174,7 @@
             <button class="btn btn-block btn-primary" id="createInvoice"><i class="fa fa-plus-circle"></i> Rechnungen erstellen</button>
         </div>
     </div>
+    <br/><br/>
 </div>
 @endsection
 
@@ -162,21 +183,28 @@
     $(function() {
 
         $('#addExpense').click(function() {
-            var data={
-                title: '',
-                date: '2012-12-12',
-                price: 0.0,
-                tax: 0,
-                account:0,
-                description: '',
-            };
+            if ($('#expenseForm')[0].checkValidity()) {
+                var data={
+                    title: '',
+                    date: '2012-12-12',
+                    price: 0.0,
+                    tax: 0,
+                    account:0,
+                    description: '',
+                    car: null
+                };
 
-            $.each($('#expenseForm').serializeArray(), function() {data[this.name] = this.value});
+                $.each($('#expenseForm').serializeArray(), function() {data[this.name] = this.value});
 
-            expenseTable.row.add(data).draw();
+                expenseTable.row.add(data).draw();
 
-            $('#expenseForm')[0].reset();
-            $('#title')[0].selectize.clear()
+                console.log(data);
+                $('#expenseForm')[0].reset();
+                $('#title')[0].selectize.clear()
+                $('#car')[0].selectize.clear()
+            } else {
+                $('#expenseForm')[0].reportValidity();
+            }
         });
 
         var expenseTable = $('#car_table').DataTable({
@@ -216,6 +244,13 @@
                 }},
                 { data: 'price', name: 'price', render: function(value) {
                     return indicatedCurrency(value);
+                } },
+                { data: 'car', name: 'car', render: function(value) {
+                    if ($.isNumeric(value)) {
+                        return $('#car')[0].selectize.options[parseInt(value)].text;
+                    }
+
+                    return value;
                 } },
                 { data: 'date', name: 'date' , render: function(value) {
                     return (new Date(value)).toLocaleDateString('de');
@@ -277,6 +312,8 @@
             language: 'de',
             maxDate: new Date(),
         });
+
+        $('#car').selectize({});
 
         $('#title').selectize({
             persist: false,

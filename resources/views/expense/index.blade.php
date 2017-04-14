@@ -3,6 +3,10 @@
 @section('content')
 <div class="container">
     <div class="row">
+        <div class="col-md-2 col-md-offset-10">
+            <a href="{{route('expense_mass')}}" class="btn btn-block btn-primary"><i class="fa fa-magic"></i> Massenerstellung</a>
+            <br/>
+        </div>
         <div class="col-md-12">
             <div class="panel panel-default">
                 <div class="panel-heading">Rechnung/Quittung hinzufügen</div>
