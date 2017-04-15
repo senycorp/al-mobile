@@ -36,6 +36,10 @@
                                     <td>{{$car->getPurchasePrice()}}</td>
                                 </tr>
                                 <tr>
+                                    <td>Bankkonto</td>
+                                    <td>{{$car->getPurchaseInvoice()->isAccount()}}</td>
+                                </tr>
+                                <tr>
                                     <td>Einkaufsbeleg</td>
                                     <td><a href="{{route('expense_detail' , ['id' => $car->getPurchaseInvoice()->id])}}">Einkaufsbeleg öffnen</a></td>
                                 </tr>
