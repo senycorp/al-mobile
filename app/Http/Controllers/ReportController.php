@@ -49,7 +49,7 @@ class ReportController extends Controller
 
         $cashBefore = DB::select('SELECT sum(price) AS cashBefore FROM invoices WHERE date < \'' . $fromDate . '\' AND account = 0;')[0]->cashBefore;
 
-        return view('report.index', ['data' => [
+        return view('report.index2', ['data' => [
             'cashBefore' => $cashBefore,
             'expenses' => $expenses,
         ]]);
