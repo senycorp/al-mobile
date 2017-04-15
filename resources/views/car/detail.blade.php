@@ -194,7 +194,7 @@
                                     <label for="invoice_price" class="col-md-4 control-label">Betrag</label>
 
                                     <div class="col-md-6">
-                                        <input id="invoice_price" type="number" class="form-control" name="invoice_price"
+                                        <input id="invoice_price" step="0.01" type="number" class="form-control" name="invoice_price"
                                                value="{{ old('invoice_price') }}" required autofocus>
 
                                         @if ($errors->has('invoice_price'))
@@ -328,7 +328,7 @@
                                         <label for="sale_price" class="col-md-4 control-label">Preis</label>
 
                                         <div class="col-md-6">
-                                            <input id="sale_price" type="number" class="form-control" name="sale_price"
+                                            <input id="sale_price" step="0.01" type="number" class="form-control" name="sale_price"
                                                    value="{{ old('sale_price') }}" required autofocus>
 
                                             @if ($errors->has('sale_price'))

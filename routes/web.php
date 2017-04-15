@@ -11,6 +11,7 @@
 |
 */
 
+use App\Car;
 use App\Invoice;
 use Goutte\Client;
 use Illuminate\Support\Facades\Auth;
@@ -18,6 +19,52 @@ use Illuminate\Support\Facades\Auth;
 Route::get('/', 'HomeController@index')->name('dashboard')->middleware('auth');;
 
 Auth::routes();
+
+Route::get('/mass', function () {
+    return view('mass.index');
+})->name('mass')->middleware('auth');
+
+Route::post('/mass/invoice', function () {
+    $data = request()->toArray();
+
+    foreach ($data as $key => $value) {
+        $data[str_replace('expense_', '', $key)] = $value;
+
+        unset($data[$key]);
+    }
+
+
+    $data['user_id'] = Auth::user()->id;
+
+    if (is_numeric($data['title'])) {
+        $data['invoice_type_id'] = $data['title'];
+        $data['title'] = null;
+    }
+
+    $invoice = Invoice::create($data);
+
+    return redirect()->back();
+})->name('mass_invoice')->middleware('auth');
+
+Route::post('/mass/car', function () {
+    $data = request()->toArray();
+    $data['user_id'] = Auth::user()->id;
+
+    $car = Car::create($data);
+
+    $car->invoices()->create([
+        'title' => 'Einkaufsbeleg',
+        'price' => -$car->purchase_price,
+        'date' => $car->purchase_date,
+        'account' => $data['account'],
+        'description' => 'Einkaufsbeleg für ' . $car->title . ' mit FG ' . $car->chassis_number,
+        'purchase_invoice' => 1,
+        'user_id' => Auth::user()->id,
+        'tax' => $car->tax
+    ]);
+
+    return redirect()->back();
+})->name('mass_car')->middleware('auth');
 
 Route::get('/expense/mass', function() {
     return view('expense.mass');

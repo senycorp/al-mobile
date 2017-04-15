@@ -60,6 +60,7 @@
                             <li {!!  Request::is('/') ? 'class="active"' : '' !!}><a href="{{ route('dashboard') }}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
                             <li {!!  Request::is('car') || Request::is('car/*') ? 'class="active"' : '' !!}}><a href="{{ route('car_index') }}"><i class="fa fa-car"></i> Autos</a></li>
                             <li {!!  Request::is('expense*') ? 'class="active"' : '' !!}}><a href="{{ route('expense_index') }}"><i class="fa fa-euro"></i> Rechnungen</a></li>
+                            <li {!!  Request::is('mass') ? 'class="active"' : '' !!}}><a href="{{ route('mass') }}"><i class="fa fa-arrow-circle-down"></i> Massenerstellung</a></li>
                             <li {!!  Request::is('report') ? 'class="active"' : '' !!}}><a href="{{ route('report') }}"><i class="fa fa-area-chart"></i> Reports</a></li>
                             <li><a href="javascript:void(0)">|</a></li>
 

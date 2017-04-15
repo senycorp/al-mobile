@@ -84,7 +84,7 @@
                             <label for="purchase_price" class="col-md-4 control-label">Einkaufspreis</label>
 
                             <div class="col-md-6">
-                                <input id="purchase_price" type="number" class="form-control" name="purchase_price" value="{{ old('purchase_price') }}" required autofocus>
+                                <input id="purchase_price" type="number" step="0.01" class="form-control" name="purchase_price" value="{{ old('purchase_price') }}" required autofocus>
 
                                 @if ($errors->has('purchase_price'))
                                     <span class="help-block">

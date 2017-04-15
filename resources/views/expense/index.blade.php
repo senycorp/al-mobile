@@ -33,7 +33,7 @@
                             <label for="price" class="col-md-4 control-label">Betrag</label>
 
                             <div class="col-md-6">
-                                <input id="price" type="number" class="form-control" name="price" value="{{ old('price') }}" required autofocus>
+                                <input id="price" step="0.01" type="number" class="form-control" name="price" value="{{ old('price') }}" required autofocus>
 
                                 @if ($errors->has('price'))
                                     <span class="help-block">
