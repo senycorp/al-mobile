@@ -33,6 +33,8 @@ Route::post('/mass/invoice', function () {
         unset($data[$key]);
     }
 
+    if ($data['car']) $data['car_id'] = $data['car'];
+
 
     $data['user_id'] = Auth::user()->id;
 
