@@ -131,7 +131,7 @@
         </div>
         <div class="col-md-6">
             <div class="panel panel-default">
-                <div class="panel-heading">Massenerstellung</div>
+                <div class="panel-heading">Rechnung erstellen</div>
 
                 <div class="panel-body">
                     <form class="form-horizontal" role="form" id="expenseForm" method="POST" action="{{ route('mass_invoice') }}">
@@ -169,11 +169,23 @@
                             </div>
                         </div>
 
+                        <div class="form-group{{ $errors->has('expense_in_out') ? ' has-error' : '' }}">
+                            <label for="tax" class="col-md-4 control-label">Einnahme/Ausgabe</label>
+                            <div class="checkbox col-md-6">
+                                <label>
+                                    <input type="radio" name="expense_in_out" checked="checked" value="in"> Einnahme
+                                </label>
+                                <label>
+                                    <input type="radio" name="expense_in_out" value="out"> Ausgabe
+                                </label>
+                            </div>
+                        </div>
+
                         <div class="form-group{{ $errors->has('expense_price') ? ' has-error' : '' }}">
                             <label for="expense_price" class="col-md-4 control-label">Betrag</label>
 
                             <div class="col-md-6">
-                                <input id="expense_price" type="number" step="0.01" class="form-control" name="expense_price" value="{{ old('expense_price') }}" required autofocus>
+                                <input id="expense_price" type="number" step="0.01" min="0" class="form-control" name="expense_price" value="{{ old('expense_price') }}" required autofocus>
 
                                 @if ($errors->has('expense_price'))
                                     <span class="help-block">

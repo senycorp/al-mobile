@@ -107,6 +107,8 @@ class CarController extends Controller
             'invoice_tax' => 'required'
         ]);
 
+
+
         $data = $request->toArray();
         $data['invoice_type_id'] = null;
         if (is_numeric($data['invoice_title'])) {
@@ -117,7 +119,7 @@ class CarController extends Controller
         Car::find($id)->invoices()->create([
             'title' => $data['invoice_title'],
             'invoice_type_id' => $data['invoice_type_id'],
-            'price' => $data['invoice_price'],
+            'price' => ($data['invoice_in_out'] == 'in') ? $data['invoice_price'] : -$data['invoice_price'],
             'date' => $data['invoice_date'],
             'user_id' => Auth::user()->id,
             'tax' => $data['invoice_tax'],

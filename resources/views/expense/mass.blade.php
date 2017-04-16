@@ -59,11 +59,23 @@
                             </div>
                         </div>
 
+                        <div class="form-group{{ $errors->has('in_out') ? ' has-error' : '' }}">
+                            <label for="tax" class="col-md-4 control-label">Einnahme/Ausgabe</label>
+                            <div class="checkbox col-md-6">
+                                <label>
+                                    <input type="radio" name="in_out" checked="checked" value="in"> Einnahme
+                                </label>
+                                <label>
+                                    <input type="radio" name="in_out" value="out"> Ausgabe
+                                </label>
+                            </div>
+                        </div>
+
                         <div class="form-group{{ $errors->has('price') ? ' has-error' : '' }}">
                             <label for="price" class="col-md-4 control-label">Betrag</label>
 
                             <div class="col-md-6">
-                                <input id="price" step="0.01" type="number" class="form-control" name="price" value="{{ old('price') }}" required autofocus>
+                                <input id="price" step="0.01" type="number" min="0" class="form-control" name="price" value="{{ old('price') }}" required autofocus>
 
                                 @if ($errors->has('price'))
                                     <span class="help-block">
@@ -77,7 +89,7 @@
                             <label for="date" class="col-md-4 control-label">Datum</label>
 
                             <div class="col-md-6">
-                                <input id="date" type="text" class="form-control" name="date" value="{{ old('date') }}" onchange="$(this).val('')" required autofocus>
+                                <input id="date" type="text" class="form-control" name="date" value="{{ old('date') }}" readonly required autofocus>
 
                                 @if ($errors->has('date'))
                                     <span class="help-block">
@@ -242,7 +254,8 @@
 
                     return value;
                 }},
-                { data: 'price', name: 'price', render: function(value) {
+                { data: 'price', name: 'price', render: function(value, filter, object) {
+                    if (object['in_out'] == 'out') value = -value;
                     return indicatedCurrency(value);
                 } },
                 { data: 'car', name: 'car', render: function(value) {
@@ -253,7 +266,7 @@
                     return value;
                 } },
                 { data: 'date', name: 'date' , render: function(value) {
-                    return (new Date(value)).toLocaleDateString('de');
+                    return value;
                 }},
                 { data: 'tax', name: 'tax' , render: function(value) {
                     return (parseInt(value)) ? '§25a' : '19%';

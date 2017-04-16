@@ -29,11 +29,41 @@
                             </div>
                         </div>
 
+                        <div class="form-group{{ $errors->has('car_id') ? ' has-error' : '' }}">
+                            <label for="car_id" class="col-md-4 control-label">Auto</label>
+
+                            <div class="col-md-6">
+                                <select id="car_id" class="form-control" name="car_id">
+                                    <option value=""><i>-</i></option>
+                                    @foreach (\App\Car::all() as $car)
+                                        <option value="{{$car->id}}">{{$car->title}} [{{$car->chassis_number}}]</option>
+                                    @endforeach
+                                </select>
+                                @if ($errors->has('car_id'))
+                                    <span class="help-block">
+                                        <strong>{{ $errors->first('car_id') }}</strong>
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="form-group{{ $errors->has('in_out') ? ' has-error' : '' }}">
+                            <label for="tax" class="col-md-4 control-label">Einnahme/Ausgabe</label>
+                            <div class="checkbox col-md-6">
+                                <label>
+                                    <input type="radio" name="in_out" checked="checked" value="in"> Einnahme
+                                </label>
+                                <label>
+                                    <input type="radio" name="in_out" value="out"> Ausgabe
+                                </label>
+                            </div>
+                        </div>
+
                         <div class="form-group{{ $errors->has('price') ? ' has-error' : '' }}">
                             <label for="price" class="col-md-4 control-label">Betrag</label>
 
                             <div class="col-md-6">
-                                <input id="price" step="0.01" type="number" class="form-control" name="price" value="{{ old('price') }}" required autofocus>
+                                <input id="price" step="0.01" min="0" type="number" class="form-control" name="price" value="{{ old('price') }}" required autofocus>
 
                                 @if ($errors->has('price'))
                                     <span class="help-block">
@@ -250,6 +280,8 @@
                 }
             }
         });
+
+        $('#car_id').selectize({});
     });
 </script>
 @endpush

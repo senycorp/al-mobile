@@ -118,7 +118,7 @@
                                         <label for="title" class="col-md-4 control-label">Bezeichnung</label>
 
                                         <div class="col-md-6">
-                                            <input id="title" type="text" class="form-control" name="title" value="{{ $expense->title }}" required autofocus>
+                                            <input id="title" type="text" class="form-control" name="title" value="{{$expense->title ? $expense->getTitle() : $expense->invoice_type_id}}" required autofocus>
 
                                             @if ($errors->has('title'))
                                                 <span class="help-block">
@@ -128,11 +128,23 @@
                                         </div>
                                     </div>
 
+                                    <div class="form-group{{ $errors->has('in_out') ? ' has-error' : '' }}">
+                                        <label for="tax" class="col-md-4 control-label">Einnahme/Ausgabe</label>
+                                        <div class="checkbox col-md-6">
+                                            <label>
+                                                <input type="radio" name="in_out" @if($expense->price >= 0)checked="checked" @endif value="in"> Einnahme
+                                            </label>
+                                            <label>
+                                                <input type="radio" name="in_out" @if($expense->price < 0)checked="checked" @endif value="out"> Ausgabe
+                                            </label>
+                                        </div>
+                                    </div>
+
                                     <div class="form-group{{ $errors->has('price') ? ' has-error' : '' }}">
                                         <label for="price" class="col-md-4 control-label">Betrag</label>
 
                                         <div class="col-md-6">
-                                            <input id="price" step="0.01" type="number" class="form-control" name="price" value="{{ $expense->price }}" required autofocus>
+                                            <input id="price" step="0.01" min="0" type="number" class="form-control" name="price" value="{{ abs($expense->price) }}" required autofocus>
 
                                             @if ($errors->has('price'))
                                                 <span class="help-block">
@@ -229,7 +241,7 @@
             persist: false,
             maxItems: 1,
             searchField: ['title'],
-            options: {!! collect(DB::select('select id, title, tax from invoice_types'))->toJson() !!},
+            options: {!! collect(DB::select('select id, title, tax from invoice_types'))->prepend(['id' => $expense->title,'title' => $expense->title,'tax' => 0, ])->toJson() !!},
             valueField: 'id',
             labelField: 'title',
             create: function(input) {

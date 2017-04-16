@@ -194,11 +194,23 @@
                                     </div>
                                 </div>
 
+                                <div class="form-group{{ $errors->has('invoice_in_out') ? ' has-error' : '' }}">
+                                    <label for="invoice_in_out" class="col-md-4 control-label">Einnahme/Ausgabe</label>
+                                    <div class="checkbox col-md-6">
+                                        <label>
+                                            <input type="radio" name="invoice_in_out" checked="checked" value="in"> Einnahme
+                                        </label>
+                                        <label>
+                                            <input type="radio" name="invoice_in_out" value="out"> Ausgabe
+                                        </label>
+                                    </div>
+                                </div>
+
                                 <div class="form-group{{ $errors->has('invoice_price') ? ' has-error' : '' }}">
                                     <label for="invoice_price" class="col-md-4 control-label">Betrag</label>
 
                                     <div class="col-md-6">
-                                        <input id="invoice_price" step="0.01" type="number" class="form-control" name="invoice_price"
+                                        <input id="invoice_price" step="0.01" min="0" type="number" class="form-control" name="invoice_price"
                                                value="{{ old('invoice_price') }}" required autofocus>
 
                                         @if ($errors->has('invoice_price'))

@@ -45,6 +45,10 @@ class ExpenseController extends Controller
             $data['title'] = null;
         }
 
+        if ($data['in_out'] == 'out') {
+            $data['price'] = -$data['price'];
+        }
+
         $invoice = Invoice::create($data);
 
         return redirect()->route('expense_detail', ['id' => $invoice->id]);

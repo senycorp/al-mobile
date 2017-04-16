@@ -34,6 +34,7 @@ Route::post('/mass/invoice', function () {
     }
 
     if ($data['car']) $data['car_id'] = $data['car'];
+    if ($data['in_out'] == 'out') $data['price'] = -$data['price'];
 
 
     $data['user_id'] = Auth::user()->id;
@@ -84,6 +85,9 @@ Route::post('/expense/mass', function() {
                 $eData['title'] = null;
             }
 
+            if ($eData['in_out'] == 'out')
+                $eData['price'] = -$eData['price'];
+
             $invoices[] = Invoice::create($eData);
         }
     }
@@ -106,7 +110,19 @@ Route::get('/expense/{id}/delete', function($id) {
     return redirect()->route('expense_index');
 })->name('expense_delete')->middleware('auth');;
 Route::post('/expense/{id}/update', function($id) {
-    \App\Invoice::find($id)->fill(request()->toArray())->save();
+    $data = request()->toArray();
+
+    if ($data['in_out'] == 'out')
+        $data['price'] = -$data['price'];
+
+    if (is_numeric($data['title'])) {
+        $data['invoice_type_id'] = $data['title'];
+        $data['title'] = null;
+    } else {
+        $data['invoice_type_id'] = null;
+    }
+
+    \App\Invoice::find($id)->fill($data)->save();
 
     return redirect()->back();
 })->name('expense_update')->middleware('auth');;
