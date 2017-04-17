@@ -211,6 +211,8 @@
         });
 
         $('#quarter').trigger('change');
+
+        $('#from_date').datepicker().data('datepicker').selectDate(new Date('1990-12-12'));
     });
 </script>
 @endpush
