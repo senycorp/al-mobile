@@ -37,3 +37,7 @@ textarea {
 html, body {
     height: 297mm;
 }
+
+table {
+    font-size: 20px !important;
+}
