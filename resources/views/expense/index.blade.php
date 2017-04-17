@@ -51,10 +51,10 @@
                             <label for="tax" class="col-md-4 control-label">Einnahme/Ausgabe</label>
                             <div class="checkbox col-md-6">
                                 <label>
-                                    <input type="radio" name="in_out" checked="checked" value="in"> Einnahme
+                                    <input type="radio" name="in_out" value="in"> Einnahme
                                 </label>
                                 <label>
-                                    <input type="radio" name="in_out" value="out"> Ausgabe
+                                    <input type="radio" name="in_out" checked="checked" value="out"> Ausgabe
                                 </label>
                             </div>
                         </div>
