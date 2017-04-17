@@ -154,9 +154,10 @@ class CarController extends Controller
     }
 
     public function getData(Request $request) {
-        $cars = DB::table('cars')->select(['id', 'title', 'chassis_number', 'purchase_date', 'purchase_price', 'sale_date', 'sale_price']);
+        $cars = DB::table('cars')->select(['id', 'title', 'chassis_number', 'purchase_date', 'purchase_price', 'sale_date', 'sale_price'])->whereNotNull('sale_date');
 
         return Datatables::of($cars)->setRowClass(function ($car) {
+            return '';
             return ($car->sale_date) ? 'danger' : 'success';
         })->make(true);
     }
