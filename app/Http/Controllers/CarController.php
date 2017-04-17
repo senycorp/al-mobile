@@ -157,15 +157,16 @@ class CarController extends Controller
         $cars = DB::table('cars')->select(['id', 'title', 'chassis_number', 'purchase_date', 'purchase_price', 'sale_date', 'sale_price'])->whereNotNull('sale_date');
 
         return Datatables::of($cars)->setRowClass(function ($car) {
-            return '';
-            return ($car->sale_date) ? 'danger' : 'success';
+            return 'danger';
         })->make(true);
     }
 
     public function getDataStock(Request $request) {
         $cars = DB::table('cars')->select(['id', 'title', 'chassis_number', 'purchase_date', 'purchase_price'])->whereNull('sale_date');
 
-        return Datatables::of($cars)->make(true);
+        return Datatables::of($cars)->setRowClass(function ($car) {
+            return 'success';
+        })->make(true);
     }
 
     public function getInvoiceData(Request $request, $id) {
